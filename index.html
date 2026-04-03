@@ -127,12 +127,12 @@ label { display: block; font-size: 0.78rem; color: var(--text2); margin-bottom: 
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 .divider { height: 1px; background: var(--border); margin: 12px 0; }
 select option { background: #1a1a2e; }
-/* 配当設定 */
+/* éå½è¨­å® */
 .payout-row { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--border); }
 .payout-row:last-child { border-bottom: none; }
 .rank-label { font-size: 1.1rem; min-width: 34px; text-align: center; }
 .pct-total-bar { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; padding: 8px 12px; background: var(--surface2); border-radius: 8px; font-size: 0.82rem; }
-/* 順位�ɲり当て (Step3) */
+/* é ä½ÜÉ²ãå½ã¦ (Step3) */
 .rank-assign-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--surface2); border-radius: 10px; margin-bottom: 8px; }
 .rank-assign-row .rank-badge { font-size: 1.2rem; min-width: 30px; }
 .rank-assign-row .payout-disp { color: var(--gold); font-weight: 700; font-size: 0.88rem; white-space: nowrap; }
@@ -142,179 +142,179 @@ select option { background: #1a1a2e; }
 <body>
 
 <header>
-  <div class="logo">🃏</div>
+  <div class="logo">ð</div>
   <div>
     <h1>Tomopay Dealer</h1>
-    <div class="subtitle">友達間の取引・賭けを管理</div>
+    <div class="subtitle">åééã®åå¼ã»è³­ããç®¡ç</div>
   </div>
 </header>
 
 <nav>
   <button class="active" onclick="switchView('home')">
-    <span class="nav-icon">🏠</span>ホーム
+    <span class="nav-icon">ð </span>ãã¼ã 
   </button>
   <button onclick="switchView('players')">
-    <span class="nav-icon">👥</span>メンバー
+    <span class="nav-icon">ð¥</span>ã¡ã³ãã¼
   </button>
   <button onclick="switchView('trade')">
-    <span class="nav-icon">🔄</span>取引
+    <span class="nav-icon">ð</span>åå¼
   </button>
   <button onclick="switchView('game')">
-    <span class="nav-icon">🎲</span>ゲーム
+    <span class="nav-icon">ð²</span>ã²ã¼ã 
   </button>
   <button onclick="switchView('settle')">
-    <span class="nav-icon">💸</span>精算
+    <span class="nav-icon">ð¸</span>ç²¾ç®
   </button>
   <button onclick="switchView('settings')">
-    <span class="nav-icon">⚙️</span>設定
+    <span class="nav-icon">âï¸</span>è¨­å®
   </button>
 </nav>
 
 <main>
-  <!-- ホーム -->
+  <!-- ãã¼ã  -->
   <div id="view-home" class="view active">
     <div id="home-empty" class="empty-state" style="display:none">
-      <div class="icon">🃏</div>
-      <p>まずメンバーを追加して<br>はじめましょう！</p>
+      <div class="icon">ð</div>
+      <p>ã¾ãã¡ã³ãã¼ãè¿½å ãã¦<br>ã¯ããã¾ãããï¼</p>
       <br>
-      <button class="btn btn-primary" onclick="switchView('players')">メンバーを追加</button>
+      <button class="btn btn-primary" onclick="switchView('players')">ã¡ã³ãã¼ãè¿½å </button>
     </div>
     <div id="home-content">
       <div class="balance-summary" id="home-summary"></div>
       <div class="card">
-        <div class="card-title">💰 現在の残高</div>
+        <div class="card-title">ð° ç¾å¨ã®æ®é«</div>
         <div id="home-balances"></div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-        <button class="btn btn-blue btn-full" onclick="openTradeModal()">🔄 取引を記録</button>
-        <button class="btn btn-success btn-full" onclick="openNewGameModal()">🎲 ゲームを記録</button>
+        <button class="btn btn-blue btn-full" onclick="openTradeModal()">ð åå¼ãè¨é²</button>
+        <button class="btn btn-success btn-full" onclick="openNewGameModal()">ð² ã²ã¼ã ãè¨é²</button>
       </div>
     </div>
   </div>
 
-  <!-- メンバー -->
+  <!-- ã¡ã³ãã¼ -->
   <div id="view-players" class="view">
-    <div class="section-header"><span class="section-title">メンバー管理</span></div>
+    <div class="section-header"><span class="section-title">ã¡ã³ãã¼ç®¡ç</span></div>
     <div class="card">
-      <div class="card-title">＋ 新しいメンバーを追加</div>
+      <div class="card-title">ï¼ æ°ããã¡ã³ãã¼ãè¿½å </div>
       <div style="display:flex; gap:10px; flex-wrap:wrap;">
         <div style="flex:1; min-width:120px;">
-          <label>名前</label>
-          <input id="new-player-name" type="text" placeholder="例：田中" maxlength="20">
+          <label>åå</label>
+          <input id="new-player-name" type="text" placeholder="ä¾ï¼ç°ä¸­" maxlength="20">
         </div>
         <div style="flex:0 0 140px;">
-          <label>初期所持金</label>
+          <label>åæææé</label>
           <input id="new-player-amount" type="number" placeholder="10000" min="0">
         </div>
       </div>
       <br>
-      <button class="btn btn-primary btn-full" onclick="addPlayer()">追加</button>
+      <button class="btn btn-primary btn-full" onclick="addPlayer()">è¿½å </button>
     </div>
     <div class="card">
-      <div class="card-title">メンバー一覧</div>
+      <div class="card-title">ã¡ã³ãã¼ä¸è¦§</div>
       <div id="players-list"></div>
     </div>
   </div>
 
-  <!-- 取引 -->
+  <!-- åå¼ -->
   <div id="view-trade" class="view">
     <div class="section-header">
-      <span class="section-title">取引履歴</span>
-      <button class="btn btn-blue btn-sm" onclick="openTradeModal()">＋ 記録</button>
+      <span class="section-title">åå¼å±¥æ­´</span>
+      <button class="btn btn-blue btn-sm" onclick="openTradeModal()">ï¼ è¨é²</button>
     </div>
     <div id="trade-list"></div>
   </div>
 
-  <!-- ゲーム -->
+  <!-- ã²ã¼ã  -->
   <div id="view-game" class="view">
     <div class="section-header">
-      <span class="section-title">ゲーム履歴</span>
-      <button class="btn btn-success btn-sm" onclick="openNewGameModal()">＋ 記録</button>
+      <span class="section-title">ã²ã¼ã å±¥æ­´</span>
+      <button class="btn btn-success btn-sm" onclick="openNewGameModal()">ï¼ è¨é²</button>
     </div>
     <div id="game-list"></div>
   </div>
 
-  <!-- 精算 -->
+  <!-- ç²¾ç® -->
   <div id="view-settle" class="view">
-    <div class="section-header"><span class="section-title">精算</span></div>
+    <div class="section-header"><span class="section-title">ç²¾ç®</span></div>
     <div id="settle-content"></div>
   </div>
 
-  <!-- 設定 -->
+  <!-- è¨­å® -->
   <div id="view-settings" class="view">
-    <div class="section-title" style="margin-bottom:14px">設定</div>
+    <div class="section-title" style="margin-bottom:14px">è¨­å®</div>
     <div class="card">
-      <div class="card-title">通貨設定</div>
+      <div class="card-title">éè²¨è¨­å®</div>
       <div class="settings-row">
         <div>
-          <div class="lbl">通貨記号</div>
-          <div class="sub">金額の前に表示される記号</div>
+          <div class="lbl">éè²¨è¨å·</div>
+          <div class="sub">éé¡ã®åã«è¡¨ç¤ºãããè¨å·</div>
         </div>
-        <input id="setting-symbol" type="text" placeholder="¥" maxlength="3"
+        <input id="setting-symbol" type="text" placeholder="Â¥" maxlength="3"
           oninput="saveSetting('symbol', this.value); renderAll()">
       </div>
       <div class="settings-row">
         <div>
-          <div class="lbl">通貨名称</div>
-          <div class="sub">例：円 / ドル / コイン / チップ</div>
+          <div class="lbl">éè²¨åç§°</div>
+          <div class="sub">ä¾ï¼å / ãã« / ã³ã¤ã³ / ããã</div>
         </div>
-        <input id="setting-name" type="text" placeholder="円" maxlength="6"
+        <input id="setting-name" type="text" placeholder="å" maxlength="6"
           oninput="saveSetting('currencyName', this.value); renderAll()">
       </div>
     </div>
     <div class="card">
-      <div class="card-title">データ管理</div>
+      <div class="card-title">ãã¼ã¿ç®¡ç</div>
       <div class="settings-row">
         <div>
-          <div class="lbl">全データをリセット</div>
-          <div class="sub">メンバー・履歴すべて削除</div>
+          <div class="lbl">å¨ãã¼ã¿ããªã»ãã</div>
+          <div class="sub">ã¡ã³ãã¼ã»å±¥æ­´ãã¹ã¦åé¤</div>
         </div>
-        <button class="btn btn-danger btn-sm" onclick="resetAll()">リセット</button>
+        <button class="btn btn-danger btn-sm" onclick="resetAll()">ãªã»ãã</button>
       </div>
       <div class="settings-row">
         <div>
-          <div class="lbl">残高のみリセット</div>
-          <div class="sub">メンバーは残し、残高を初期化</div>
+          <div class="lbl">æ®é«ã®ã¿ãªã»ãã</div>
+          <div class="sub">ã¡ã³ãã¼ã¯æ®ããæ®é«ãåæå</div>
         </div>
-        <button class="btn btn-outline btn-sm" onclick="resetBalances()">残高リセット</button>
+        <button class="btn btn-outline btn-sm" onclick="resetBalances()">æ®é«ãªã»ãã</button>
       </div>
     </div>
   </div>
 </main>
 
-<!-- 取引モーダル -->
+<!-- åå¼ã¢ã¼ãã« -->
 <div class="modal-overlay" id="trade-modal">
   <div class="modal">
-    <div class="modal-title">🔄 取引を記録</div>
+    <div class="modal-title">ð åå¼ãè¨é²</div>
     <div class="form-group">
       <div class="trade-player-select">
         <div>
-          <label>支払う人</label>
+          <label>æ¯æãäºº</label>
           <select id="trade-from"></select>
         </div>
-        <div class="trade-arrow-center">→</div>
+        <div class="trade-arrow-center">â</div>
         <div>
-          <label>受け取る人</label>
+          <label>åãåãäºº</label>
           <select id="trade-to"></select>
         </div>
       </div>
     </div>
     <div class="form-group">
-      <label id="trade-amount-label">金額</label>
+      <label id="trade-amount-label">éé¡</label>
       <input id="trade-amount" type="number" placeholder="0" min="1">
     </div>
     <div class="form-group">
-      <label>対価・内容（任意）</label>
-      <textarea id="trade-description" placeholder="例：ランチをおつでもらつた&#10;Bさんが荷物を運んでくれた&#10;など"></textarea>
+      <label>å¯¾ä¾¡ã»åå®¹ï¼ä»»æï¼</label>
+      <textarea id="trade-description" placeholder="ä¾ï¼ã©ã³ããããã£ã¦ããã£ã&#10;Bãããè·ç©ãéãã§ããã&#10;ãªã©"></textarea>
     </div>
     <div class="modal-actions">
-      <button class="btn btn-outline" onclick="closeTradeModal()">キャンセル</button>
-      <button class="btn btn-blue" onclick="recordTrade()">✓ 記録する</button>
+      <button class="btn btn-outline" onclick="closeTradeModal()">ã­ã£ã³ã»ã«</button>
+      <button class="btn btn-blue" onclick="recordTrade()">â è¨é²ãã</button>
     </div>
   </div>
 </div>
 
-<!-- ゲームモーダル -->
+<!-- ã²ã¼ã ã¢ã¼ãã« -->
 <div class="modal-overlay" id="game-modal">
   <div class="modal">
     <div class="step-indicator">
@@ -325,87 +325,87 @@ select option { background: #1a1a2e; }
 
     <!-- STEP 1 -->
     <div id="modal-step1">
-      <div class="modal-title">🎲 ゲームの設定</div>
+      <div class="modal-title">ð² ã²ã¼ã ã®è¨­å®</div>
       <div class="form-group">
-        <label>ゲーム名（任意）</label>
-        <input id="game-name-input" type="text" placeholder="例：ポーカー第1回戦">
+        <label>ã²ã¼ã åï¼ä»»æï¼</label>
+        <input id="game-name-input" type="text" placeholder="ä¾ï¼ãã¼ã«ã¼ç¬¬1åæ¦">
       </div>
       <div class="form-group">
-        <label>配当タイプ</label>
+        <label>éå½ã¿ã¤ã</label>
         <div class="game-type-selector">
           <div class="game-type-btn selected" id="type-winner_takes_all"
             onclick="selectGameType('winner_takes_all')">
-            <div class="icon">🏆</div>
-            <div class="name">勝者総取り</div>
-            <div class="desc">1人が全額獲得</div>
+            <div class="icon">ð</div>
+            <div class="name">åèç·åã</div>
+            <div class="desc">1äººãå¨é¡ç²å¾</div>
           </div>
           <div class="game-type-btn" id="type-split"
             onclick="selectGameType('split')">
-            <div class="icon">🤝</div>
-            <div class="name">山分け</div>
-            <div class="desc">複数人で均等分割</div>
+            <div class="icon">ð¤</div>
+            <div class="name">å±±åã</div>
+            <div class="desc">è¤æ°äººã§åç­åå²</div>
           </div>
           <div class="game-type-btn" id="type-fixed_amount"
             onclick="selectGameType('fixed_amount')">
-            <div class="icon">💴</div>
-            <div class="name">絶対額</div>
-            <div class="desc">順位ごとに金額設定</div>
+            <div class="icon">ð´</div>
+            <div class="name">çµ¶å¯¾é¡</div>
+            <div class="desc">é ä½ãã¨ã«éé¡è¨­å®</div>
           </div>
           <div class="game-type-btn" id="type-percentage"
             onclick="selectGameType('percentage')">
-            <div class="icon">📊</div>
-            <div class="name">配当割合</div>
-            <div class="desc">ポットの%で分配</div>
+            <div class="icon">ð</div>
+            <div class="name">éå½å²å</div>
+            <div class="desc">ãããã®%ã§åé</div>
           </div>
         </div>
       </div>
 
-      <!-- 配当設定セクション（絶対額 / 割合のとき表示） -->
+      <!-- éå½è¨­å®ã»ã¯ã·ã§ã³ï¼çµ¶å¯¾é¡ / å²åã®ã¨ãè¡¨ç¤ºï¼ -->
       <div id="payout-config-section" style="display:none">
         <div class="card" style="margin-bottom:12px">
-          <div class="card-title" id="payout-config-title">💴 配当設定</div>
+          <div class="card-title" id="payout-config-title">ð´ éå½è¨­å®</div>
           <div id="payout-config-hint" style="font-size:0.72rem;color:var(--text2);margin-bottom:12px"></div>
           <div id="payout-rows"></div>
           <button class="btn btn-outline btn-sm btn-full" style="margin-top:10px"
-            onclick="addPayoutRank()">＋ 順位を追加</button>
+            onclick="addPayoutRank()">ï¼ é ä½ãè¿½å </button>
           <div id="pct-total-bar" class="pct-total-bar" style="display:none">
-            <span>合計</span>
+            <span>åè¨</span>
             <span><span id="pct-total" style="font-weight:700">0</span>%</span>
           </div>
         </div>
       </div>
 
       <div class="form-group">
-        <label>参加者を選択</label>
+        <label>åå èãé¸æ</label>
         <div id="player-select-list"></div>
       </div>
       <div class="modal-actions">
-        <button class="btn btn-outline" onclick="closeGameModal()">キャンセル</button>
-        <button class="btn btn-primary" onclick="goStep(2)">次へ →</button>
+        <button class="btn btn-outline" onclick="closeGameModal()">ã­ã£ã³ã»ã«</button>
+        <button class="btn btn-primary" onclick="goStep(2)">æ¬¡ã¸ â</button>
       </div>
     </div>
 
     <!-- STEP 2 -->
     <div id="modal-step2" style="display:none">
-      <div class="modal-title">💴 ベット額を入力</div>
+      <div class="modal-title">ð´ ãããé¡ãå¥å</div>
       <div id="bet-inputs"></div>
       <div class="total-pot-display">
-        <div class="label">合計ポット</div>
+        <div class="label">åè¨ããã</div>
         <div class="amount" id="pot-amount">0</div>
       </div>
       <div class="modal-actions">
-        <button class="btn btn-outline" onclick="goStep(1)">← 戻る</button>
-        <button class="btn btn-primary" onclick="goStep(3)">次へ →</button>
+        <button class="btn btn-outline" onclick="goStep(1)">â æ»ã</button>
+        <button class="btn btn-primary" onclick="goStep(3)">æ¬¡ã¸ â</button>
       </div>
     </div>
 
     <!-- STEP 3 -->
     <div id="modal-step3" style="display:none">
-      <div class="modal-title" id="step3-title">🏆 勝者を選択</div>
+      <div class="modal-title" id="step3-title">ð åèãé¸æ</div>
       <div id="winner-select"></div>
       <div class="modal-actions">
-        <button class="btn btn-outline" onclick="goStep(2)">← 戻る</button>
-        <button class="btn btn-success" onclick="recordGame()">✓ 結果を記録</button>
+        <button class="btn btn-outline" onclick="goStep(2)">â æ»ã</button>
+        <button class="btn btn-success" onclick="recordGame()">â çµæãè¨é²</button>
       </div>
     </div>
   </div>
@@ -419,7 +419,7 @@ select option { background: #1a1a2e; }
 // =====================
 let state = {
   players: [], games: [], trades: [],
-  settings: { symbol: '¥', currencyName: '円' },
+  settings: { symbol: 'Â¥', currencyName: 'å' },
   nextPlayerId: 1, nextGameId: 1, nextTradeId: 1
 };
 
@@ -434,13 +434,13 @@ const AVATAR_COLORS = [
   '#448aff','#ff9800','#e91e63','#4caf50',
   '#00bcd4','#9c27b0'
 ];
-const RANK_LABELS = ['🥇','🥈','🥉','4位','5位','6位','7位','8位'];
+const RANK_LABELS = ['ð¥','ð¥','ð¥','4ä½','5ä½','6ä½','7ä½','8ä½'];
 
 // =====================
 // UTILS
 // =====================
 function fmt(n) {
-  const sym = state.settings.symbol || '¥';
+  const sym = state.settings.symbol || 'Â¥';
   return sym + Math.round(n).toLocaleString('ja-JP');
 }
 function getPlayer(id) { return state.players.find(p => p.id === id); }
@@ -469,7 +469,7 @@ function loadState() {
     if (s) {
       const parsed = JSON.parse(s);
       state = { ...state, ...parsed };
-      if (!state.settings) state.settings = { symbol: '¥', currencyName: '円' };
+      if (!state.settings) state.settings = { symbol: 'Â¥', currencyName: 'å' };
       if (!state.trades) state.trades = [];
       if (!state.nextTradeId) state.nextTradeId = 1;
     }
@@ -505,20 +505,20 @@ function renderHome() {
   if (!hasPl) return;
   document.getElementById('home-summary').innerHTML = `
     <div class="summary-card">
-      <div class="val">${state.players.length}<span style="font-size:0.9rem">人</span></div>
-      <div class="lbl">メンバー</div>
+      <div class="val">${state.players.length}<span style="font-size:0.9rem">äºº</span></div>
+      <div class="lbl">ã¡ã³ãã¼</div>
     </div>
     <div class="summary-card">
-      <div class="val">${state.trades.length}<span style="font-size:0.9rem">件</span></div>
-      <div class="lbl">取引</div>
+      <div class="val">${state.trades.length}<span style="font-size:0.9rem">ä»¶</span></div>
+      <div class="lbl">åå¼</div>
     </div>
     <div class="summary-card">
-      <div class="val">${state.games.length}<span style="font-size:0.9rem">回</span></div>
-      <div class="lbl">ゲーム</div>
+      <div class="val">${state.games.length}<span style="font-size:0.9rem">å</span></div>
+      <div class="lbl">ã²ã¼ã </div>
     </div>`;
   document.getElementById('home-balances').innerHTML = state.players.map(p => {
     const diff = p.currentBalance - p.initialBalance;
-    const diffStr = diff > 0 ? `+${fmt(diff)}` : diff < 0 ? fmt(diff) : '±0';
+    const diffStr = diff > 0 ? `+${fmt(diff)}` : diff < 0 ? fmt(diff) : 'Â±0';
     const chipClass = diff > 0 ? 'chip-up' : diff < 0 ? 'chip-down' : 'chip-even';
     const balClass = p.currentBalance > 0 ? 'balance-positive' : p.currentBalance < 0 ? 'balance-negative' : 'balance-neutral';
     return `
@@ -526,7 +526,7 @@ function renderHome() {
         ${getAvatar(p)}
         <div class="player-info">
           <div class="player-name">${p.name}</div>
-          <div class="player-balance-label">初期: ${fmt(p.initialBalance)}</div>
+          <div class="player-balance-label">åæ: ${fmt(p.initialBalance)}</div>
         </div>
         <div style="text-align:right">
           <div class="player-balance ${balClass}">${fmt(p.currentBalance)}</div>
@@ -539,7 +539,7 @@ function renderHome() {
 function renderPlayers() {
   const el = document.getElementById('players-list');
   if (!state.players.length) {
-    el.innerHTML = '<div style="color:var(--text2);text-align:center;padding:20px;font-size:0.85rem">まだメンバーがいません</div>';
+    el.innerHTML = '<div style="color:var(--text2);text-align:center;padding:20px;font-size:0.85rem">ã¾ã ã¡ã³ãã¼ããã¾ãã</div>';
     return;
   }
   el.innerHTML = state.players.map(p => `
@@ -547,16 +547,16 @@ function renderPlayers() {
       ${getAvatar(p)}
       <div class="player-info">
         <div class="player-name">${p.name}</div>
-        <div class="player-balance-label">初期: ${fmt(p.initialBalance)} → 現在: ${fmt(p.currentBalance)}</div>
+        <div class="player-balance-label">åæ: ${fmt(p.initialBalance)} â ç¾å¨: ${fmt(p.currentBalance)}</div>
       </div>
-      <button class="btn btn-danger btn-sm" onclick="removePlayer(${p.id})">削除</button>
+      <button class="btn btn-danger btn-sm" onclick="removePlayer(${p.id})">åé¤</button>
     </div>`).join('');
 }
 
 function renderTrades() {
   const el = document.getElementById('trade-list');
   if (!state.trades.length) {
-    el.innerHTML = `<div class="empty-state"><div class="icon">🔄</div><p>まだ取引が記録されていません<br>「記録がら追加しましょう</p></div>`;
+    el.innerHTML = `<div class="empty-state"><div class="icon">ð</div><p>ã¾ã åå¼ãè¨é²ããã¦ãã¾ãã<br>ãè¨é²ãããè¿½å ãã¾ããã</p></div>`;
     return;
   }
   el.innerHTML = [...state.trades].reverse().map(t => {
@@ -566,7 +566,7 @@ function renderTrades() {
       <div class="history-card">
         <div class="history-header">
           <div>
-            <div class="history-title">💸 対価交換</div>
+            <div class="history-title">ð¸ å¯¾ä¾¡äº¤æ</div>
             <div class="history-date">${fmtDate(t.date)}</div>
           </div>
           <div class="history-amount" style="color:var(--blue)">${fmt(t.amount)}</div>
@@ -574,11 +574,11 @@ function renderTrades() {
         <div class="trade-flow">
           ${getAvatar(from, true)}
           <span style="font-weight:600;font-size:0.88rem">${from.name}</span>
-          <span class="arrow">→</span>
+          <span class="arrow">â</span>
           ${getAvatar(to, true)}
           <span style="font-weight:600;font-size:0.88rem">${to.name}</span>
           <span class="amount-badge">${fmt(t.amount)}</span>
-          ${t.description ? `<div class="service-label">📝 ${t.description}</div>` : ''}
+          ${t.description ? `<div class="service-label">ð ${t.description}</div>` : ''}
         </div>
       </div>`;
   }).join('');
@@ -587,17 +587,17 @@ function renderTrades() {
 function renderGames() {
   const el = document.getElementById('game-list');
   if (!state.games.length) {
-    el.innerHTML = `<div class="empty-state"><div class="icon">🎲</div><p>まだゲームが記録されていません</p></div>`;
+    el.innerHTML = `<div class="empty-state"><div class="icon">ð²</div><p>ã¾ã ã²ã¼ã ãè¨é²ããã¦ãã¾ãã</p></div>`;
     return;
   }
   el.innerHTML = [...state.games].reverse().map(g => {
     const pot = g.participants.reduce((s, p) => s + p.bet, 0);
     const typeLabel = {
-      winner_takes_all: '🏆 勝者総取り',
-      split: '🤝 山分け',
-      fixed_amount: '💴 絶対額',
-      percentage: '📊 配当割合'
-    }[g.type] || '🎲';
+      winner_takes_all: 'ð åèç·åã',
+      split: 'ð¤ å±±åã',
+      fixed_amount: 'ð´ çµ¶å¯¾é¡',
+      percentage: 'ð éå½å²å'
+    }[g.type] || 'ð²';
 
     let chips;
     if ((g.type === 'fixed_amount' || g.type === 'percentage') && g.rankings && g.rankings.length) {
@@ -621,7 +621,7 @@ function renderGames() {
         const pl = getPlayer(gp.playerId);
         if (!pl) return '';
         const isWinner = g.winners.includes(gp.playerId);
-        return `<span class="participant-chip ${isWinner ? 'winner' : ''}">${isWinner ? '🏆 ' : ''}${pl.name} ${fmt(gp.bet)}</span>`;
+        return `<span class="participant-chip ${isWinner ? 'winner' : ''}">${isWinner ? 'ð ' : ''}${pl.name} ${fmt(gp.bet)}</span>`;
       }).join('');
     }
 
@@ -629,10 +629,10 @@ function renderGames() {
       <div class="history-card">
         <div class="history-header">
           <div>
-            <div class="history-title">${g.name || 'ゲーム #' + g.id}</div>
+            <div class="history-title">${g.name || 'ã²ã¼ã  #' + g.id}</div>
             <div class="history-date">${fmtDate(g.date)} <span style="color:var(--text2)">${typeLabel}</span></div>
           </div>
-          <div class="history-amount" style="color:var(--gold)">ポット ${fmt(pot)}</div>
+          <div class="history-amount" style="color:var(--gold)">ããã ${fmt(pot)}</div>
         </div>
         <div>${chips}</div>
       </div>`;
@@ -642,12 +642,12 @@ function renderGames() {
 function renderSettle() {
   const el = document.getElementById('settle-content');
   if (state.players.length < 2) {
-    el.innerHTML = `<div class="empty-state"><div class="icon">💸</div><p>2人以上のメンバーを追加すると<br>精算情報が表示されます</p></div>`;
+    el.innerHTML = `<div class="empty-state"><div class="icon">ð¸</div><p>2äººä»¥ä¸ã®ã¡ã³ãã¼ãè¿½å ããã¨<br>ç²¾ç®æå ±ãè¡¨ç¤ºããã¾ã</p></div>`;
     return;
   }
   const txns = calculateSettlement();
   if (!txns.length) {
-    el.innerHTML = `<div class="empty-state"><div class="icon">✅</div><p>全員の収支がゼロです。<br>精算は不要です！</p></div>`;
+    el.innerHTML = `<div class="empty-state"><div class="icon">â</div><p>å¨å¡ã®åæ¯ãã¼ã­ã§ãã<br>ç²¾ç®ã¯ä¸è¦ã§ãï¼</p></div>`;
     return;
   }
   const rows = txns.map(t => {
@@ -656,7 +656,7 @@ function renderSettle() {
       <div class="settlement-row">
         ${getAvatar(from)}
         <div style="font-weight:600">${from.name}</div>
-        <div class="settlement-arrow">→</div>
+        <div class="settlement-arrow">â</div>
         ${getAvatar(to)}
         <div style="font-weight:600">${to.name}</div>
         <div class="settlement-amount">${fmt(t.amount)}</div>
@@ -664,15 +664,15 @@ function renderSettle() {
   }).join('');
   el.innerHTML = `
     <div class="card">
-      <div class="card-title">💡 最少取引で精算する方法</div>
+      <div class="card-title">ð¡ æå°åå¼ã§ç²¾ç®ããæ¹æ³</div>
       ${rows}
     </div>
     <div class="card">
-      <div class="card-title">各メンバーの損益</div>
+      <div class="card-title">åã¡ã³ãã¼ã®æç</div>
       ${state.players.map(p => {
         const diff = p.currentBalance - p.initialBalance;
         const chipClass = diff > 0 ? 'chip-up' : diff < 0 ? 'chip-down' : 'chip-even';
-        const diffStr = diff > 0 ? `+${fmt(diff)}` : diff < 0 ? fmt(diff) : '±0';
+        const diffStr = diff > 0 ? `+${fmt(diff)}` : diff < 0 ? fmt(diff) : 'Â±0';
         return `
           <div class="player-row">
             ${getAvatar(p)}
@@ -686,8 +686,8 @@ function renderSettle() {
 function renderSettingsInputs() {
   const symEl = document.getElementById('setting-symbol');
   const nameEl = document.getElementById('setting-name');
-  if (document.activeElement !== symEl) symEl.value = state.settings.symbol || '¥';
-  if (document.activeElement !== nameEl) nameEl.value = state.settings.currencyName || '円';
+  if (document.activeElement !== symEl) symEl.value = state.settings.symbol || 'Â¥';
+  if (document.activeElement !== nameEl) nameEl.value = state.settings.currencyName || 'å';
 }
 
 // =====================
@@ -718,8 +718,8 @@ function addPlayer() {
   const amtEl = document.getElementById('new-player-amount');
   const name = nameEl.value.trim();
   const amount = parseFloat(amtEl.value) || 10000;
-  if (!name) { showToast('⚠️ 名前を入力してください'); return; }
-  if (state.players.find(p => p.name === name)) { showToast('⚠️ 同じ名前のメンバーが存在します'); return; }
+  if (!name) { showToast('â ï¸ ååãå¥åãã¦ãã ãã'); return; }
+  if (state.players.find(p => p.name === name)) { showToast('â ï¸ åãååã®ã¡ã³ãã¼ãå­å¨ãã¾ã'); return; }
   state.players.push({
     id: state.nextPlayerId++, name,
     initialBalance: amount, currentBalance: amount,
@@ -727,38 +727,38 @@ function addPlayer() {
   });
   nameEl.value = ''; amtEl.value = '';
   saveState(); renderAll();
-  showToast(`✅ ${name} を追加しました`);
+  showToast(`â ${name} ãè¿½å ãã¾ãã`);
 }
 function removePlayer(id) {
   const p = getPlayer(id);
-  if (!confirm(`「${p.name}」を削除しますか？`)) return;
+  if (!confirm(`ã${p.name}ããåé¤ãã¾ããï¼`)) return;
   state.players = state.players.filter(pl => pl.id !== id);
   saveState(); renderAll();
-  showToast('🗑️ メンバーを削除しました');
+  showToast('ðï¸ ã¡ã³ãã¼ãåé¤ãã¾ãã');
 }
 function resetBalances() {
-  if (!confirm('全員の残高を初期残高にリセットしますか？')) return;
+  if (!confirm('å¨å¡ã®æ®é«ãåææ®é«ã«ãªã»ãããã¾ããï¼')) return;
   state.players.forEach(p => p.currentBalance = p.initialBalance);
   state.games = []; state.trades = [];
   saveState(); renderAll();
-  showToast('🔄 残高をリセットしました');
+  showToast('ð æ®é«ããªã»ãããã¾ãã');
 }
 function resetAll() {
-  if (!confirm('全データ（メンバー・取引・ゲーム）をすべて削除しますか？')) return;
+  if (!confirm('å¨ãã¼ã¼ï¼ã¡ã³ãã¼ã»åå¼ã»ã²ã¼ã ï¼ããã¹ã¦åé¤ãã¾ããï¼')) return;
   state.players = []; state.games = []; state.trades = [];
   state.nextPlayerId = 1; state.nextGameId = 1; state.nextTradeId = 1;
   saveState(); renderAll();
-  showToast('🗑️ すべてのデータを削除しました');
+  showToast('ðï¸ ãã¹ã¦ã®ãã¼ã¿ãåé¤ãã¾ãã');
 }
 
 // =====================
 // TRADE MODAL
 // =====================
 function openTradeModal() {
-  if (state.players.length < 2) { showToast('⚠️ 2人以上のメンバーが必要です'); switchView('players'); return; }
-  const cur = state.settings.currencyName || '円';
-  document.getElementById('trade-amount-label').textContent = `金額（${cur}）`;
-  const opts = state.players.map(p => `<option value="${p.id}">${p.name}（${fmt(p.currentBalance)}）</option>`).join('');
+  if (state.players.length < 2) { showToast('â ï¸ 2äººä»¥ä¸ã®ã¡ã³ãã¼ãå¿è¦ã§ã'); switchView('players'); return; }
+  const cur = state.settings.currencyName || 'å';
+  document.getElementById('trade-amount-label').textContent = `éé¡ï¼${cur}ï¼`;
+  const opts = state.players.map(p => `<option value="${p.id}">${p.name}ï¼${fmt(p.currentBalance)}ï¼</option>`).join('');
   document.getElementById('trade-from').innerHTML = opts;
   document.getElementById('trade-to').innerHTML = opts;
   if (state.players.length >= 2) document.getElementById('trade-to').selectedIndex = 1;
@@ -772,20 +772,20 @@ function recordTrade() {
   const toId = parseInt(document.getElementById('trade-to').value);
   const amount = parseFloat(document.getElementById('trade-amount').value);
   const description = document.getElementById('trade-description').value.trim();
-  if (fromId === toId) { showToast('⚠️ 支払う人と受け取る人が同じです'); return; }
-  if (!amount || amount <= 0) { showToast('⚠️ 金額を入力してください'); return; }
+  if (fromId === toId) { showToast('â ï¸ æ¯æãäººã¨åãåãäººãåãã§ã'); return; }
+  if (!amount || amount <= 0) { showToast('â ï¸ éé¡ãå¥åãã¦ãã ãã'); return; }
   getPlayer(fromId).currentBalance -= amount;
   getPlayer(toId).currentBalance += amount;
   state.trades.push({ id: state.nextTradeId++, fromId, toId, amount, description, date: new Date().toISOString() });
   saveState(); closeTradeModal(); renderAll();
-  showToast(`💸 ${getPlayer(fromId).name} → ${getPlayer(toId).name} ${fmt(amount)} を記録しました`);
+  showToast(`ð¸ ${getPlayer(fromId).name} â ${getPlayer(toId).name} ${fmt(amount)} ãè¨é²ãã¾ãã`);
 }
 
 // =====================
 // GAME MODAL
 // =====================
 function openNewGameModal() {
-  if (state.players.length < 2) { showToast('⚠️ 2人以上のメンバーが必要です'); switchView('players'); return; }
+  if (state.players.length < 2) { showToast('â ï¸ 2äººä»¥ä¸ã®ã¡ã³ãã¼ãå¿è¦ã§ã'); switchView('players'); return; }
   newGame = { name: '', type: 'winner_takes_all', payoutConfig: [], participants: [], winners: [] };
   document.getElementById('game-name-input').value = '';
   // Reset type buttons
@@ -816,22 +816,22 @@ function selectGameType(type) {
 
 function renderPayoutConfig() {
   const isPct = newGame.type === 'percentage';
-  const cur = state.settings.currencyName || '円';
-  document.getElementById('payout-config-title').textContent = isPct ? '📊 配当割合設定' : '💴 絶対額設定';
+  const cur = state.settings.currencyName || 'å';
+  document.getElementById('payout-config-title').textContent = isPct ? 'ð éå½å²åè¨­å®' : 'ð´ çµ¶å¯¾é¡è¨­å®';
   document.getElementById('payout-config-hint').textContent = isPct
-    ? '各順位の獲得割合（%）を入力してください（合計100推奨）'
-    : `各順位の獲得${cur}額を入力してください`;
+    ? 'åé ä½ã®ç²å¾å²åï¼%ï¼ãå¥åãã¦ãã ããï¼åè¨100æ¨å¥¨ï¼'
+    : `åé ä½ã®ç²å¾${cur}é¡ãå¥åãã¦ãã ãã`;
 
   document.getElementById('payout-rows').innerHTML = newGame.payoutConfig.map((cfg, i) => `
     <div class="payout-row">
-      <span class="rank-label">${RANK_LABELS[i] || (i+1)+'位'}</span>
+      <span class="rank-label">${RANK_LABELS[i] || (i+1)+'ä½'}</span>
       <input type="number" value="${cfg.value || ''}"
         placeholder="${isPct ? '50' : '5000'}" min="0" style="flex:1"
         oninput="updatePayoutConfig(${i}, this.value)">
       <span style="font-size:0.78rem;color:var(--text2);min-width:22px">${isPct ? '%' : cur}</span>
       ${newGame.payoutConfig.length > 1
         ? `<button class="btn btn-outline btn-sm" style="padding:4px 8px;min-width:32px"
-            onclick="removePayoutRank(${i})">✕</button>`
+            onclick="removePayoutRank(${i})">â</button>`
         : '<div style="min-width:32px"></div>'}
     </div>`).join('');
 
@@ -881,11 +881,11 @@ function validateStep1() {
   // Validate payout config for new types
   if (newGame.type === 'fixed_amount' || newGame.type === 'percentage') {
     if (newGame.payoutConfig.length === 0) {
-      showToast('⚠️ 配当設定を追加してください'); return false;
+      showToast('â ï¸ éå½è¨­å®ãè¿½å ãã¦ãã ãã'); return false;
     }
     for (let i = 0; i < newGame.payoutConfig.length; i++) {
       if (!newGame.payoutConfig[i].value || newGame.payoutConfig[i].value <= 0) {
-        showToast(`⚠️ ${RANK_LABELS[i]}の値を入力してください`); return false;
+        showToast(`â ï¸ ${RANK_LABELS[i]}ã®å¤ãå¥åãã¦ãã ãã`); return false;
       }
     }
     // Re-read values from DOM
@@ -897,12 +897,12 @@ function validateStep1() {
   }
 
   const checked = [...document.querySelectorAll('#player-select-list input[type=checkbox]:checked')];
-  if (checked.length < 2) { showToast('⚠️ 2人以上の参加者を選択してください'); return false; }
+  if (checked.length < 2) { showToast('â ï¸ 2äººä»¥ä¸ã®åå èãé¸æãã¦ãã ãã'); return false; }
 
   // Check that enough participants for the configured ranks
   if ((newGame.type === 'fixed_amount' || newGame.type === 'percentage') &&
       newGame.payoutConfig.length > checked.length) {
-    showToast(`⚠️ 設定した順位数(${newGame.payoutConfig.length})より参加者を増やしてください`);
+    showToast(`â ï¸ è¨­å®ããé ä½æ°(${newGame.payoutConfig.length})ããåå èãå¢ããã¦ãã ãã`);
     return false;
   }
 
@@ -919,7 +919,7 @@ function validateStep2() {
     const gp = newGame.participants.find(p => p.playerId === pid);
     if (gp) gp.bet = val;
   });
-  if (!valid) { showToast('⚠️ 全員のベット額を入力してください'); return false; }
+  if (!valid) { showToast('â ï¸ å¨å¡ã®ãããé¡ãå¥åãã¦ãã ãã'); return false; }
   return true;
 }
 
@@ -928,7 +928,7 @@ function renderPlayerSelectList() {
     <label class="player-select-item">
       <input type="checkbox" value="${p.id}" checked>
       ${getAvatar(p, true)}
-      <span>${p.name}（${fmt(p.currentBalance)}）</span>
+      <span>${p.name}ï¼${fmt(p.currentBalance)}ï¼</span>
     </label>`).join('');
 }
 
@@ -957,7 +957,7 @@ function renderWinnerSelect() {
     return;
   }
   const isSplit = newGame.type === 'split';
-  document.getElementById('step3-title').textContent = isSplit ? '🤝 勝者を選択（複数可）' : '🏆 勝者を1人選択';
+  document.getElementById('step3-title').textContent = isSplit ? 'ð¤ åèãé¸æï¼è¤æ°å¯ï¼' : 'ð åèã1äººé¸æ';
   const inputType = isSplit ? 'checkbox' : 'radio';
   document.getElementById('winner-select').innerHTML = newGame.participants.map(gp => {
     const p = getPlayer(gp.playerId);
@@ -974,7 +974,7 @@ function renderWinnerSelect() {
 function renderRankAssignment() {
   const isPct = newGame.type === 'percentage';
   const pot = newGame.participants.reduce((s, p) => s + p.bet, 0);
-  document.getElementById('step3-title').textContent = '🏅 順位を割り当て';
+  document.getElementById('step3-title').textContent = 'ð é ä½ãå²ãå½ã¦';
   const participantOpts = newGame.participants.map(gp => {
     const p = getPlayer(gp.playerId);
     return `<option value="${p.id}">${p.name}</option>`;
@@ -982,15 +982,15 @@ function renderRankAssignment() {
 
   document.getElementById('winner-select').innerHTML = `
     <div style="font-size:0.78rem;color:var(--text2);margin-bottom:12px">
-      各順位に参加者を割り当ててください
+      åé ä½ã«åå èãå²ãå½ã¦ã¦ãã ãã
     </div>
     ${newGame.payoutConfig.map((cfg, i) => {
       const payout = isPct ? Math.floor(pot * cfg.value / 100) : cfg.value;
       return `
         <div class="rank-assign-row">
-          <span class="rank-badge">${RANK_LABELS[i] || (i+1)+'位'}</span>
+          <span class="rank-badge">${RANK_LABELS[i] || (i+1)+'ä½'}</span>
           <select id="rank-player-${i}" style="flex:1">
-            <option value="">-- 選択 --</option>
+            <option value="">-- é¸æ --</option>
             ${participantOpts}
           </select>
           <span class="payout-disp">
@@ -999,7 +999,7 @@ function renderRankAssignment() {
         </div>`;
     }).join('')}
     <div style="font-size:0.72rem;color:var(--text2);margin-top:8px">
-      ※ 選択されなかった参加者はベット額没収・獲得0
+      â» é¸æãããªãã£ãåå èã¯ãããé¡æ²¡åã»ç²å¾0
     </div>`;
 }
 
@@ -1015,7 +1015,7 @@ function recordGame() {
     recordGameWithRanks(); return;
   }
   const checked = [...document.querySelectorAll('#winner-select input:checked')];
-  if (!checked.length) { showToast('⚠️ 勝者を選択してください'); return; }
+  if (!checked.length) { showToast('â ï¸ åèãé¸æãã¦ãã ãã'); return; }
   newGame.winners = checked.map(c => parseInt(c.value));
   const pot = newGame.participants.reduce((s, p) => s + p.bet, 0);
   newGame.participants.forEach(gp => { getPlayer(gp.playerId).currentBalance -= gp.bet; });
@@ -1031,7 +1031,7 @@ function recordGame() {
     date: new Date().toISOString()
   });
   saveState(); closeGameModal(); renderAll();
-  showToast('🎉 ゲームを記録しました！');
+  showToast('ð ã²ã¼ã ãè¨é²ãã¾ããï¼');
 }
 
 function recordGameWithRanks() {
@@ -1043,11 +1043,11 @@ function recordGameWithRanks() {
   for (let i = 0; i < newGame.payoutConfig.length; i++) {
     const sel = document.getElementById('rank-player-' + i);
     if (!sel || !sel.value) {
-      showToast(`⚠️ ${RANK_LABELS[i]}の参加者を選択してください`); return;
+      showToast(`â ï¸ ${RANK_LABELS[i]}ã®åå èãé¸æãã¦ãã ãã`); return;
     }
     const pid = parseInt(sel.value);
     if (assignments.find(a => a.playerId === pid)) {
-      showToast('⚠️ 同じ参加者を複数の順位に割り当てることはできません'); return;
+      showToast('â ï¸ åãåå èãè¤æ°ã®é ä½ã«å²ãå½ã¦ããã¨ã¯ã§ãã¾ãã'); return;
     }
     assignments.push({ playerId: pid, place: i + 1 });
   }
@@ -1073,7 +1073,7 @@ function recordGameWithRanks() {
   });
 
   saveState(); closeGameModal(); renderAll();
-  showToast('🎉 ゲームを記録しました！');
+  showToast('ð ã²ã¼ã ãè¨é²ãã¾ããï¼');
 }
 
 // =====================
@@ -1090,4 +1090,3 @@ document.getElementById('new-player-amount').addEventListener('keydown', e => {
 </script>
 </body>
 </html>
-w2�G
