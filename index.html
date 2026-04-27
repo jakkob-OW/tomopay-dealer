@@ -1,1092 +1,1341 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tomopay Dealer</title>
-<style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-:root {
-  --bg: #0d0d1a; --surface: #1a1a2e; --surface2: #252540;
-  --border: #2e2e50; --accent: #7c4dff; --accent2: #00c9a7;
-  --gold: #ffd700; --red: #ff5370; --green: #00e676;
-  --blue: #448aff; --text: #e0e0f0; --text2: #9090b0; --radius: 12px;
-}
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
-header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 14px 20px; display: flex; align-items: center; gap: 12px; }
-header .logo { font-size: 1.4rem; }
-header h1 { font-size: 1.15rem; font-weight: 800; letter-spacing: 0.01em; background: linear-gradient(90deg, #7c4dff, #00c9a7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-header .subtitle { font-size: 0.72rem; color: var(--text2); margin-top: 2px; }
-nav { display: flex; background: var(--surface); border-bottom: 1px solid var(--border); overflow-x: auto; scrollbar-width: none; }
-nav::-webkit-scrollbar { display: none; }
-nav button { flex: 1; min-width: 64px; padding: 10px 6px; background: none; border: none; color: var(--text2); font-size: 0.72rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; border-bottom: 2px solid transparent; transition: all 0.2s; white-space: nowrap; }
-nav button.active { color: var(--accent); border-bottom-color: var(--accent); }
-nav button .nav-icon { font-size: 1.1rem; }
-main { flex: 1; padding: 16px; max-width: 600px; width: 100%; margin: 0 auto; }
-.view { display: none; }
-.view.active { display: block; }
-.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 14px; }
-.card-title { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text2); margin-bottom: 12px; }
-.btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 16px; border: none; border-radius: 8px; font-size: 0.88rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
-.btn-primary { background: var(--accent); color: white; }
-.btn-primary:hover { background: #6a3de8; }
-.btn-success { background: var(--accent2); color: #000; }
-.btn-success:hover { background: #00b090; }
-.btn-blue { background: var(--blue); color: white; }
-.btn-blue:hover { background: #2070dd; }
-.btn-danger { background: var(--red); color: white; }
-.btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
-.btn-outline:hover { background: var(--surface2); }
-.btn-sm { padding: 6px 12px; font-size: 0.78rem; }
-.btn-full { width: 100%; justify-content: center; }
-input, select, textarea { width: 100%; padding: 10px 14px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 0.88rem; outline: none; transition: border 0.2s; font-family: inherit; }
-input:focus, select:focus, textarea:focus { border-color: var(--accent); }
-textarea { resize: vertical; min-height: 70px; }
-label { display: block; font-size: 0.78rem; color: var(--text2); margin-bottom: 5px; }
-.form-group { margin-bottom: 12px; }
-.player-row { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--border); }
-.player-row:last-child { border-bottom: none; }
-.player-avatar { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.95rem; flex-shrink: 0; }
-.player-info { flex: 1; }
-.player-name { font-weight: 600; font-size: 0.92rem; }
-.player-balance-label { font-size: 0.72rem; color: var(--text2); margin-top: 2px; }
-.player-balance { font-size: 1.05rem; font-weight: 700; }
-.balance-positive { color: var(--green); }
-.balance-negative { color: var(--red); }
-.balance-neutral { color: var(--text); }
-.chip { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 0.7rem; font-weight: 600; }
-.chip-up { background: rgba(0,230,118,0.15); color: var(--green); }
-.chip-down { background: rgba(255,83,112,0.15); color: var(--red); }
-.chip-even { background: rgba(144,144,176,0.15); color: var(--text2); }
-.chip-blue { background: rgba(68,138,255,0.15); color: var(--blue); }
-.section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
-.section-title { font-size: 1.05rem; font-weight: 700; }
-.history-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-bottom: 10px; }
-.history-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
-.history-title { font-weight: 600; font-size: 0.92rem; }
-.history-date { font-size: 0.7rem; color: var(--text2); margin-top: 2px; }
-.history-amount { font-size: 0.9rem; font-weight: 700; }
-.participant-chip { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.72rem; background: var(--surface2); border: 1px solid var(--border); margin: 2px; }
-.participant-chip.winner { background: rgba(255,215,0,0.12); border-color: var(--gold); color: var(--gold); }
-.participant-chip.trade-from { background: rgba(255,83,112,0.12); border-color: var(--red); color: var(--red); }
-.participant-chip.trade-to { background: rgba(0,230,118,0.12); border-color: var(--green); color: var(--green); }
-.trade-flow { display: flex; align-items: center; gap: 10px; padding: 12px; background: var(--surface2); border-radius: 10px; margin-bottom: 8px; flex-wrap: wrap; }
-.trade-flow .arrow { color: var(--text2); font-size: 1.1rem; }
-.trade-flow .amount-badge { background: rgba(68,138,255,0.15); color: var(--blue); padding: 2px 10px; border-radius: 20px; font-weight: 700; font-size: 0.85rem; }
-.trade-flow .service-label { font-size: 0.78rem; color: var(--text2); flex: 1 1 100%; margin-top: 4px; padding-left: 2px; }
-.settlement-row { display: flex; align-items: center; gap: 10px; padding: 13px; background: var(--surface2); border-radius: 10px; margin-bottom: 8px; flex-wrap: wrap; }
-.settlement-arrow { color: var(--text2); font-size: 1.1rem; }
-.settlement-amount { color: var(--gold); font-weight: 700; font-size: 1.05rem; margin-left: auto; }
-.step-indicator { display: flex; gap: 8px; margin-bottom: 18px; }
-.step { flex: 1; height: 4px; background: var(--border); border-radius: 2px; transition: background 0.3s; }
-.step.done { background: var(--accent); }
-.step.active { background: var(--accent2); }
-.participant-bet-row { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--border); }
-.participant-bet-row:last-child { border-bottom: none; }
-.participant-bet-row .player-avatar { width: 30px; height: 30px; font-size: 0.8rem; }
-.participant-bet-row .player-name { font-size: 0.88rem; flex: 1; }
-.bet-input { width: 100px; text-align: right; }
-.winner-select-row { display: flex; align-items: center; gap: 12px; padding: 11px; border: 2px solid var(--border); border-radius: 10px; margin-bottom: 8px; cursor: pointer; transition: all 0.2s; }
-.winner-select-row:hover, .winner-select-row.selected { border-color: var(--gold); background: rgba(255,215,0,0.05); }
-.winner-select-row .player-avatar { width: 34px; height: 34px; }
-.winner-select-row input[type="radio"], .winner-select-row input[type="checkbox"] { width: auto; accent-color: var(--gold); }
-.game-type-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
-.game-type-btn { padding: 10px 8px; background: var(--surface2); border: 2px solid var(--border); border-radius: 10px; color: var(--text); cursor: pointer; text-align: center; transition: all 0.2s; }
-.game-type-btn .icon { font-size: 1.3rem; margin-bottom: 4px; }
-.game-type-btn .name { font-size: 0.82rem; font-weight: 600; }
-.game-type-btn .desc { font-size: 0.65rem; color: var(--text2); margin-top: 2px; }
-.game-type-btn.selected { border-color: var(--accent); background: rgba(124,77,255,0.1); }
-.player-select-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 8px; cursor: pointer; transition: background 0.2s; }
-.player-select-item:hover { background: var(--surface2); }
-.player-select-item input[type="checkbox"] { width: auto; accent-color: var(--accent); }
-.total-pot-display { text-align: center; padding: 16px; background: linear-gradient(135deg, rgba(124,77,255,0.15), rgba(0,201,167,0.15)); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 14px; }
-.total-pot-display .label { font-size: 0.78rem; color: var(--text2); }
-.total-pot-display .amount { font-size: 1.8rem; font-weight: 700; color: var(--gold); }
-.balance-summary { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 14px; }
-.summary-card { background: var(--surface2); border-radius: 10px; padding: 12px; text-align: center; }
-.summary-card .val { font-size: 1.3rem; font-weight: 700; margin-bottom: 3px; }
-.summary-card .lbl { font-size: 0.68rem; color: var(--text2); }
-.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 100; align-items: flex-end; justify-content: center; }
-.modal-overlay.open { display: flex; }
-.modal { background: var(--surface); border-radius: var(--radius) var(--radius) 0 0; padding: 22px 18px; width: 100%; max-width: 600px; max-height: 92vh; overflow-y: auto; }
-.modal-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 18px; }
-.modal-actions { display: flex; gap: 10px; margin-top: 18px; }
-.modal-actions .btn { flex: 1; }
-.trade-player-select { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: end; margin-bottom: 12px; }
-.trade-arrow-center { display: flex; align-items: center; justify-content: center; padding-bottom: 10px; font-size: 1.5rem; color: var(--text2); }
-.settings-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); }
-.settings-row:last-child { border-bottom: none; }
-.settings-row .lbl { font-size: 0.88rem; }
-.settings-row .sub { font-size: 0.72rem; color: var(--text2); margin-top: 2px; }
-.settings-row input { width: 140px; }
-.badge { display: inline-flex; align-items: center; justify-content: center; background: var(--red); color: white; border-radius: 10px; font-size: 0.6rem; font-weight: 700; padding: 1px 5px; margin-left: 3px; min-width: 16px; }
-.empty-state { text-align: center; padding: 36px 20px; color: var(--text2); }
-.empty-state .icon { font-size: 2.8rem; margin-bottom: 10px; }
-.empty-state p { font-size: 0.88rem; line-height: 1.6; }
-.toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; padding: 10px 20px; font-size: 0.82rem; opacity: 0; transition: all 0.3s; pointer-events: none; z-index: 200; white-space: nowrap; }
-.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-.divider { height: 1px; background: var(--border); margin: 12px 0; }
-select option { background: #1a1a2e; }
-/* éå½è¨­å® */
-.payout-row { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--border); }
-.payout-row:last-child { border-bottom: none; }
-.rank-label { font-size: 1.1rem; min-width: 34px; text-align: center; }
-.pct-total-bar { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; padding: 8px 12px; background: var(--surface2); border-radius: 8px; font-size: 0.82rem; }
-/* é ä½ÜÉ²ãå½ã¦ (Step3) */
-.rank-assign-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--surface2); border-radius: 10px; margin-bottom: 8px; }
-.rank-assign-row .rank-badge { font-size: 1.2rem; min-width: 30px; }
-.rank-assign-row .payout-disp { color: var(--gold); font-weight: 700; font-size: 0.88rem; white-space: nowrap; }
-.rank-assign-row select { flex: 1; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tomopay Dealer</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d0d1a;
+      --surface: #1a1a2e;
+      --surface2: #252540;
+      --border: #2e2e50;
+      --accent: #7c4dff;
+      --accent2: #00c9a7;
+      --gold: #ffd700;
+      --red: #ff5370;
+      --green: #00e676;
+      --blue: #448aff;
+      --text: #e0e0f0;
+      --text2: #9090b0;
+      --radius: 12px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    header .logo { font-size: 1.4rem; }
+    header h1 { font-size: 1.15rem; font-weight: 800; letter-spacing: 0.01em; background: linear-gradient(90deg, #7c4dff, #00c9a7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    header .subtitle { font-size: 0.72rem; color: var(--text2); margin-top: 2px; }
+
+    nav {
+      display: flex;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    nav::-webkit-scrollbar { display: none; }
+
+    nav button {
+      flex: 1;
+      min-width: 64px;
+      padding: 10px 6px;
+      background: none;
+      border: none;
+      color: var(--text2);
+      font-size: 0.72rem;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    nav button.active { color: var(--accent); border-bottom-color: var(--accent); }
+    nav button .nav-icon { font-size: 1.1rem; }
+
+    main {
+      flex: 1;
+      padding: 16px;
+      max-width: 600px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .view { display: none; }
+    .view.active { display: block; }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    .card-title {
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text2);
+      margin-bottom: 12px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-primary { background: var(--accent); color: white; }
+    .btn-primary:hover { background: #6a3de8; }
+    .btn-success { background: var(--accent2); color: #000; }
+    .btn-success:hover { background: #00b090; }
+    .btn-blue { background: var(--blue); color: white; }
+    .btn-blue:hover { background: #2070dd; }
+    .btn-danger { background: var(--red); color: white; }
+    .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
+    .btn-outline:hover { background: var(--surface2); }
+    .btn-sm { padding: 6px 12px; font-size: 0.78rem; }
+    .btn-full { width: 100%; justify-content: center; }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px 14px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 0.88rem;
+      outline: none;
+      transition: border 0.2s;
+      font-family: inherit;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+    textarea { resize: vertical; min-height: 70px; }
+
+    label { display: block; font-size: 0.78rem; color: var(--text2); margin-bottom: 5px; }
+    .form-group { margin-bottom: 12px; }
+
+    .player-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .player-row:last-child { border-bottom: none; }
+
+    .player-avatar {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.95rem;
+      flex-shrink: 0;
+    }
+
+    .player-info { flex: 1; }
+    .player-name { font-weight: 600; font-size: 0.92rem; }
+    .player-balance-label { font-size: 0.72rem; color: var(--text2); margin-top: 2px; }
+    .player-balance { font-size: 1.05rem; font-weight: 700; }
+
+    .balance-positive { color: var(--green); }
+    .balance-negative { color: var(--red); }
+    .balance-neutral { color: var(--text); }
+
+    .chip {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+    .chip-up { background: rgba(0,230,118,0.15); color: var(--green); }
+    .chip-down { background: rgba(255,83,112,0.15); color: var(--red); }
+    .chip-even { background: rgba(144,144,176,0.15); color: var(--text2); }
+    .chip-blue { background: rgba(68,138,255,0.15); color: var(--blue); }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .section-title { font-size: 1.05rem; font-weight: 700; }
+
+    /* ゲーム・取引の履歴カード */
+    .history-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px;
+      margin-bottom: 10px;
+    }
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+    .history-title { font-weight: 600; font-size: 0.92rem; }
+    .history-date { font-size: 0.7rem; color: var(--text2); margin-top: 2px; }
+    .history-amount { font-size: 0.9rem; font-weight: 700; }
+
+    .participant-chip {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      margin: 2px;
+    }
+    .participant-chip.winner {
+      background: rgba(255,215,0,0.12);
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+    .participant-chip.trade-from {
+      background: rgba(255,83,112,0.12);
+      border-color: var(--red);
+      color: var(--red);
+    }
+    .participant-chip.trade-to {
+      background: rgba(0,230,118,0.12);
+      border-color: var(--green);
+      color: var(--green);
+    }
+
+    /* 取引の矢印表示 */
+    .trade-flow {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      background: var(--surface2);
+      border-radius: 10px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+    .trade-flow .arrow { color: var(--text2); font-size: 1.1rem; }
+    .trade-flow .amount-badge {
+      background: rgba(68,138,255,0.15);
+      color: var(--blue);
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+    .trade-flow .service-label {
+      font-size: 0.78rem;
+      color: var(--text2);
+      flex: 1 1 100%;
+      margin-top: 4px;
+      padding-left: 2px;
+    }
+
+    /* 精算 */
+    .settlement-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 13px;
+      background: var(--surface2);
+      border-radius: 10px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+    .settlement-arrow { color: var(--text2); font-size: 1.1rem; }
+    .settlement-amount { color: var(--gold); font-weight: 700; font-size: 1.05rem; margin-left: auto; }
+
+    /* ステップ */
+    .step-indicator {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+    .step {
+      flex: 1; height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      transition: background 0.3s;
+    }
+    .step.done { background: var(--accent); }
+    .step.active { background: var(--accent2); }
+
+    /* ゲームモーダル内 */
+    .participant-bet-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .participant-bet-row:last-child { border-bottom: none; }
+    .participant-bet-row .player-avatar { width: 30px; height: 30px; font-size: 0.8rem; }
+    .participant-bet-row .player-name { font-size: 0.88rem; flex: 1; }
+    .bet-input { width: 100px; text-align: right; }
+
+    .winner-select-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .winner-select-row:hover, .winner-select-row.selected {
+      border-color: var(--gold);
+      background: rgba(255,215,0,0.05);
+    }
+    .winner-select-row .player-avatar { width: 34px; height: 34px; }
+    .winner-select-row input[type="radio"],
+    .winner-select-row input[type="checkbox"] {
+      width: auto;
+      accent-color: var(--gold);
+    }
+
+    .game-type-selector {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .game-type-btn {
+      padding: 12px;
+      background: var(--surface2);
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .game-type-btn .icon { font-size: 1.4rem; margin-bottom: 5px; }
+    .game-type-btn .name { font-size: 0.82rem; font-weight: 600; }
+    .game-type-btn .desc { font-size: 0.68rem; color: var(--text2); margin-top: 2px; }
+    .game-type-btn.selected { border-color: var(--accent); background: rgba(124,77,255,0.1); }
+
+    .player-select-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .player-select-item:hover { background: var(--surface2); }
+    .player-select-item input[type="checkbox"] { width: auto; accent-color: var(--accent); }
+
+    /* ポット表示 */
+    .total-pot-display {
+      text-align: center;
+      padding: 16px;
+      background: linear-gradient(135deg, rgba(124,77,255,0.15), rgba(0,201,167,0.15));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 14px;
+    }
+    .total-pot-display .label { font-size: 0.78rem; color: var(--text2); }
+    .total-pot-display .amount { font-size: 1.8rem; font-weight: 700; color: var(--gold); }
+
+    .balance-summary {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .summary-card {
+      background: var(--surface2);
+      border-radius: 10px;
+      padding: 12px;
+      text-align: center;
+    }
+    .summary-card .val { font-size: 1.3rem; font-weight: 700; margin-bottom: 3px; }
+    .summary-card .lbl { font-size: 0.68rem; color: var(--text2); }
+
+    /* モーダル */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      z-index: 100;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--surface);
+      border-radius: var(--radius) var(--radius) 0 0;
+      padding: 22px 18px;
+      width: 100%;
+      max-width: 600px;
+      max-height: 92vh;
+      overflow-y: auto;
+    }
+    .modal-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 18px; }
+    .modal-actions { display: flex; gap: 10px; margin-top: 18px; }
+    .modal-actions .btn { flex: 1; }
+
+    /* 取引フォームの参加者選択 */
+    .trade-player-select {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 10px;
+      align-items: end;
+      margin-bottom: 12px;
+    }
+    .trade-arrow-center {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-bottom: 10px;
+      font-size: 1.5rem;
+      color: var(--text2);
+    }
+
+    /* 設定 */
+    .settings-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .settings-row:last-child { border-bottom: none; }
+    .settings-row .lbl { font-size: 0.88rem; }
+    .settings-row .sub { font-size: 0.72rem; color: var(--text2); margin-top: 2px; }
+    .settings-row input { width: 140px; }
+
+    /* タブバッジ */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--red);
+      color: white;
+      border-radius: 10px;
+      font-size: 0.6rem;
+      font-weight: 700;
+      padding: 1px 5px;
+      margin-left: 3px;
+      min-width: 16px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 36px 20px;
+      color: var(--text2);
+    }
+    .empty-state .icon { font-size: 2.8rem; margin-bottom: 10px; }
+    .empty-state p { font-size: 0.88rem; line-height: 1.6; }
+
+    .toast {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 10px 20px;
+      font-size: 0.82rem;
+      opacity: 0;
+      transition: all 0.3s;
+      pointer-events: none;
+      z-index: 200;
+      white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    .divider { height: 1px; background: var(--border); margin: 12px 0; }
+
+    select option { background: #1a1a2e; }
+  </style>
 </head>
 <body>
-
-<header>
-  <div class="logo">ð</div>
-  <div>
-    <h1>Tomopay Dealer</h1>
-    <div class="subtitle">åééã®åå¼ã»è³­ããç®¡ç</div>
-  </div>
-</header>
-
-<nav>
-  <button class="active" onclick="switchView('home')">
-    <span class="nav-icon">ð </span>ãã¼ã 
-  </button>
-  <button onclick="switchView('players')">
-    <span class="nav-icon">ð¥</span>ã¡ã³ãã¼
-  </button>
-  <button onclick="switchView('trade')">
-    <span class="nav-icon">ð</span>åå¼
-  </button>
-  <button onclick="switchView('game')">
-    <span class="nav-icon">ð²</span>ã²ã¼ã 
-  </button>
-  <button onclick="switchView('settle')">
-    <span class="nav-icon">ð¸</span>ç²¾ç®
-  </button>
-  <button onclick="switchView('settings')">
-    <span class="nav-icon">âï¸</span>è¨­å®
-  </button>
-</nav>
-
-<main>
-  <!-- ãã¼ã  -->
-  <div id="view-home" class="view active">
-    <div id="home-empty" class="empty-state" style="display:none">
-      <div class="icon">ð</div>
-      <p>ã¾ãã¡ã³ãã¼ãè¿½å ãã¦<br>ã¯ããã¾ãããï¼</p>
-      <br>
-      <button class="btn btn-primary" onclick="switchView('players')">ã¡ã³ãã¼ãè¿½å </button>
+  <header>
+    <div class="logo">🃏</div>
+    <div>
+      <h1>Tomopay Dealer</h1>
+      <div class="subtitle">友達間の取引・賭けを管理</div>
     </div>
-    <div id="home-content">
-      <div class="balance-summary" id="home-summary"></div>
+  </header>
+
+  <nav>
+    <button class="active" onclick="switchView('home')">
+      <span class="nav-icon">🏠</span>ホーム
+    </button>
+    <button onclick="switchView('players')">
+      <span class="nav-icon">👥</span>メンバー
+    </button>
+    <button onclick="switchView('trade')">
+      <span class="nav-icon">🔄</span>取引
+    </button>
+    <button onclick="switchView('game')">
+      <span class="nav-icon">🎲</span>ゲーム
+    </button>
+    <button onclick="switchView('settle')">
+      <span class="nav-icon">💸</span>精算
+    </button>
+    <button onclick="switchView('settings')">
+      <span class="nav-icon">⚙️</span>設定
+    </button>
+  </nav>
+
+  <main>
+    <!-- ホーム -->
+    <div id="view-home" class="view active">
+      <div id="home-empty" class="empty-state" style="display:none">
+        <div class="icon">🃏</div>
+        <p>まずメンバーを追加して<br>はじめましょう！</p>
+        <br>
+        <button class="btn btn-primary" onclick="switchView('players')">メンバーを追加</button>
+      </div>
+      <div id="home-content">
+        <div class="balance-summary" id="home-summary"></div>
+        <div class="card">
+          <div class="card-title">💰 現在の残高</div>
+          <div id="home-balances"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <button class="btn btn-blue btn-full" onclick="openTradeModal()">🔄 取引を記録</button>
+          <button class="btn btn-success btn-full" onclick="openNewGameModal()">🎲 ゲームを記録</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- メンバー -->
+    <div id="view-players" class="view">
+      <div class="section-header">
+        <span class="section-title">メンバー管理</span>
+      </div>
       <div class="card">
-        <div class="card-title">ð° ç¾å¨ã®æ®é«</div>
-        <div id="home-balances"></div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-        <button class="btn btn-blue btn-full" onclick="openTradeModal()">ð åå¼ãè¨é²</button>
-        <button class="btn btn-success btn-full" onclick="openNewGameModal()">ð² ã²ã¼ã ãè¨é²</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ã¡ã³ãã¼ -->
-  <div id="view-players" class="view">
-    <div class="section-header"><span class="section-title">ã¡ã³ãã¼ç®¡ç</span></div>
-    <div class="card">
-      <div class="card-title">ï¼ æ°ããã¡ã³ãã¼ãè¿½å </div>
-      <div style="display:flex; gap:10px; flex-wrap:wrap;">
-        <div style="flex:1; min-width:120px;">
-          <label>åå</label>
-          <input id="new-player-name" type="text" placeholder="ä¾ï¼ç°ä¸­" maxlength="20">
-        </div>
-        <div style="flex:0 0 140px;">
-          <label>åæææé</label>
-          <input id="new-player-amount" type="number" placeholder="10000" min="0">
-        </div>
-      </div>
-      <br>
-      <button class="btn btn-primary btn-full" onclick="addPlayer()">è¿½å </button>
-    </div>
-    <div class="card">
-      <div class="card-title">ã¡ã³ãã¼ä¸è¦§</div>
-      <div id="players-list"></div>
-    </div>
-  </div>
-
-  <!-- åå¼ -->
-  <div id="view-trade" class="view">
-    <div class="section-header">
-      <span class="section-title">åå¼å±¥æ­´</span>
-      <button class="btn btn-blue btn-sm" onclick="openTradeModal()">ï¼ è¨é²</button>
-    </div>
-    <div id="trade-list"></div>
-  </div>
-
-  <!-- ã²ã¼ã  -->
-  <div id="view-game" class="view">
-    <div class="section-header">
-      <span class="section-title">ã²ã¼ã å±¥æ­´</span>
-      <button class="btn btn-success btn-sm" onclick="openNewGameModal()">ï¼ è¨é²</button>
-    </div>
-    <div id="game-list"></div>
-  </div>
-
-  <!-- ç²¾ç® -->
-  <div id="view-settle" class="view">
-    <div class="section-header"><span class="section-title">ç²¾ç®</span></div>
-    <div id="settle-content"></div>
-  </div>
-
-  <!-- è¨­å® -->
-  <div id="view-settings" class="view">
-    <div class="section-title" style="margin-bottom:14px">è¨­å®</div>
-    <div class="card">
-      <div class="card-title">éè²¨è¨­å®</div>
-      <div class="settings-row">
-        <div>
-          <div class="lbl">éè²¨è¨å·</div>
-          <div class="sub">éé¡ã®åã«è¡¨ç¤ºãããè¨å·</div>
-        </div>
-        <input id="setting-symbol" type="text" placeholder="Â¥" maxlength="3"
-          oninput="saveSetting('symbol', this.value); renderAll()">
-      </div>
-      <div class="settings-row">
-        <div>
-          <div class="lbl">éè²¨åç§°</div>
-          <div class="sub">ä¾ï¼å / ãã« / ã³ã¤ã³ / ããã</div>
-        </div>
-        <input id="setting-name" type="text" placeholder="å" maxlength="6"
-          oninput="saveSetting('currencyName', this.value); renderAll()">
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title">ãã¼ã¿ç®¡ç</div>
-      <div class="settings-row">
-        <div>
-          <div class="lbl">å¨ãã¼ã¿ããªã»ãã</div>
-          <div class="sub">ã¡ã³ãã¼ã»å±¥æ­´ãã¹ã¦åé¤</div>
-        </div>
-        <button class="btn btn-danger btn-sm" onclick="resetAll()">ãªã»ãã</button>
-      </div>
-      <div class="settings-row">
-        <div>
-          <div class="lbl">æ®é«ã®ã¿ãªã»ãã</div>
-          <div class="sub">ã¡ã³ãã¼ã¯æ®ããæ®é«ãåæå</div>
-        </div>
-        <button class="btn btn-outline btn-sm" onclick="resetBalances()">æ®é«ãªã»ãã</button>
-      </div>
-    </div>
-  </div>
-</main>
-
-<!-- åå¼ã¢ã¼ãã« -->
-<div class="modal-overlay" id="trade-modal">
-  <div class="modal">
-    <div class="modal-title">ð åå¼ãè¨é²</div>
-    <div class="form-group">
-      <div class="trade-player-select">
-        <div>
-          <label>æ¯æãäºº</label>
-          <select id="trade-from"></select>
-        </div>
-        <div class="trade-arrow-center">â</div>
-        <div>
-          <label>åãåãäºº</label>
-          <select id="trade-to"></select>
-        </div>
-      </div>
-    </div>
-    <div class="form-group">
-      <label id="trade-amount-label">éé¡</label>
-      <input id="trade-amount" type="number" placeholder="0" min="1">
-    </div>
-    <div class="form-group">
-      <label>å¯¾ä¾¡ã»åå®¹ï¼ä»»æï¼</label>
-      <textarea id="trade-description" placeholder="ä¾ï¼ã©ã³ããããã£ã¦ããã£ã&#10;Bãããè·ç©ãéãã§ããã&#10;ãªã©"></textarea>
-    </div>
-    <div class="modal-actions">
-      <button class="btn btn-outline" onclick="closeTradeModal()">ã­ã£ã³ã»ã«</button>
-      <button class="btn btn-blue" onclick="recordTrade()">â è¨é²ãã</button>
-    </div>
-  </div>
-</div>
-
-<!-- ã²ã¼ã ã¢ã¼ãã« -->
-<div class="modal-overlay" id="game-modal">
-  <div class="modal">
-    <div class="step-indicator">
-      <div class="step active" id="step-bar-1"></div>
-      <div class="step" id="step-bar-2"></div>
-      <div class="step" id="step-bar-3"></div>
-    </div>
-
-    <!-- STEP 1 -->
-    <div id="modal-step1">
-      <div class="modal-title">ð² ã²ã¼ã ã®è¨­å®</div>
-      <div class="form-group">
-        <label>ã²ã¼ã åï¼ä»»æï¼</label>
-        <input id="game-name-input" type="text" placeholder="ä¾ï¼ãã¼ã«ã¼ç¬¬1åæ¦">
-      </div>
-      <div class="form-group">
-        <label>éå½ã¿ã¤ã</label>
-        <div class="game-type-selector">
-          <div class="game-type-btn selected" id="type-winner_takes_all"
-            onclick="selectGameType('winner_takes_all')">
-            <div class="icon">ð</div>
-            <div class="name">åèç·åã</div>
-            <div class="desc">1äººãå¨é¡ç²å¾</div>
+        <div class="card-title">＋ 新しいメンバーを追加</div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <div style="flex:1; min-width:120px;">
+            <label>名前</label>
+            <input id="new-player-name" type="text" placeholder="例：田中" maxlength="20">
           </div>
-          <div class="game-type-btn" id="type-split"
-            onclick="selectGameType('split')">
-            <div class="icon">ð¤</div>
-            <div class="name">å±±åã</div>
-            <div class="desc">è¤æ°äººã§åç­åå²</div>
-          </div>
-          <div class="game-type-btn" id="type-fixed_amount"
-            onclick="selectGameType('fixed_amount')">
-            <div class="icon">ð´</div>
-            <div class="name">çµ¶å¯¾é¡</div>
-            <div class="desc">é ä½ãã¨ã«éé¡è¨­å®</div>
-          </div>
-          <div class="game-type-btn" id="type-percentage"
-            onclick="selectGameType('percentage')">
-            <div class="icon">ð</div>
-            <div class="name">éå½å²å</div>
-            <div class="desc">ãããã®%ã§åé</div>
+          <div style="flex:0 0 140px;">
+            <label>初期所持金</label>
+            <input id="new-player-amount" type="number" placeholder="10000" min="0">
           </div>
         </div>
+        <br>
+        <button class="btn btn-primary btn-full" onclick="addPlayer()">追加</button>
       </div>
-
-      <!-- éå½è¨­å®ã»ã¯ã·ã§ã³ï¼çµ¶å¯¾é¡ / å²åã®ã¨ãè¡¨ç¤ºï¼ -->
-      <div id="payout-config-section" style="display:none">
-        <div class="card" style="margin-bottom:12px">
-          <div class="card-title" id="payout-config-title">ð´ éå½è¨­å®</div>
-          <div id="payout-config-hint" style="font-size:0.72rem;color:var(--text2);margin-bottom:12px"></div>
-          <div id="payout-rows"></div>
-          <button class="btn btn-outline btn-sm btn-full" style="margin-top:10px"
-            onclick="addPayoutRank()">ï¼ é ä½ãè¿½å </button>
-          <div id="pct-total-bar" class="pct-total-bar" style="display:none">
-            <span>åè¨</span>
-            <span><span id="pct-total" style="font-weight:700">0</span>%</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label>åå èãé¸æ</label>
-        <div id="player-select-list"></div>
-      </div>
-      <div class="modal-actions">
-        <button class="btn btn-outline" onclick="closeGameModal()">ã­ã£ã³ã»ã«</button>
-        <button class="btn btn-primary" onclick="goStep(2)">æ¬¡ã¸ â</button>
+      <div class="card">
+        <div class="card-title">メンバー一覧</div>
+        <div id="players-list"></div>
       </div>
     </div>
 
-    <!-- STEP 2 -->
-    <div id="modal-step2" style="display:none">
-      <div class="modal-title">ð´ ãããé¡ãå¥å</div>
-      <div id="bet-inputs"></div>
-      <div class="total-pot-display">
-        <div class="label">åè¨ããã</div>
-        <div class="amount" id="pot-amount">0</div>
+    <!-- 取引 -->
+    <div id="view-trade" class="view">
+      <div class="section-header">
+        <span class="section-title">取引履歴</span>
+        <button class="btn btn-blue btn-sm" onclick="openTradeModal()">＋ 記録</button>
       </div>
-      <div class="modal-actions">
-        <button class="btn btn-outline" onclick="goStep(1)">â æ»ã</button>
-        <button class="btn btn-primary" onclick="goStep(3)">æ¬¡ã¸ â</button>
-      </div>
+      <div id="trade-list"></div>
     </div>
 
-    <!-- STEP 3 -->
-    <div id="modal-step3" style="display:none">
-      <div class="modal-title" id="step3-title">ð åèãé¸æ</div>
-      <div id="winner-select"></div>
-      <div class="modal-actions">
-        <button class="btn btn-outline" onclick="goStep(2)">â æ»ã</button>
-        <button class="btn btn-success" onclick="recordGame()">â çµæãè¨é²</button>
+    <!-- ゲーム -->
+    <div id="view-game" class="view">
+      <div class="section-header">
+        <span class="section-title">ゲーム履歴</span>
+        <button class="btn btn-success btn-sm" onclick="openNewGameModal()">＋ 記録</button>
       </div>
+      <div id="game-list"></div>
     </div>
-  </div>
-</div>
 
-<div class="toast" id="toast"></div>
-
-<script>
-// =====================
-// STATE
-// =====================
-let state = {
-  players: [], games: [], trades: [],
-  settings: { symbol: 'Â¥', currencyName: 'å' },
-  nextPlayerId: 1, nextGameId: 1, nextTradeId: 1
-};
-
-let newGame = {
-  name: '', type: 'winner_takes_all',
-  payoutConfig: [], // [{place:1, value:X}, ...]
-  participants: [], winners: []
-};
-
-const AVATAR_COLORS = [
-  '#7c4dff','#00c9a7','#ffd700','#ff5370',
-  '#448aff','#ff9800','#e91e63','#4caf50',
-  '#00bcd4','#9c27b0'
-];
-const RANK_LABELS = ['ð¥','ð¥','ð¥','4ä½','5ä½','6ä½','7ä½','8ä½'];
-
-// =====================
-// UTILS
-// =====================
-function fmt(n) {
-  const sym = state.settings.symbol || 'Â¥';
-  return sym + Math.round(n).toLocaleString('ja-JP');
-}
-function getPlayer(id) { return state.players.find(p => p.id === id); }
-function getAvatar(player, small = false) {
-  const color = AVATAR_COLORS[player.colorIdx % AVATAR_COLORS.length];
-  const size = small ? '28px' : '38px';
-  const fs = small ? '0.75rem' : '0.95rem';
-  return `<div class="player-avatar" style="width:${size};height:${size};font-size:${fs};background:${color}22;color:${color};border:2px solid ${color}40">${player.name[0]}</div>`;
-}
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
-}
-function fmtDate(iso) {
-  return new Date(iso).toLocaleString('ja-JP', {
-    year:'numeric', month:'2-digit', day:'2-digit',
-    hour:'2-digit', minute:'2-digit'
-  });
-}
-function saveState() { localStorage.setItem('tomopay-state', JSON.stringify(state)); }
-function loadState() {
-  try {
-    const s = localStorage.getItem('tomopay-state');
-    if (s) {
-      const parsed = JSON.parse(s);
-      state = { ...state, ...parsed };
-      if (!state.settings) state.settings = { symbol: 'Â¥', currencyName: 'å' };
-      if (!state.trades) state.trades = [];
-      if (!state.nextTradeId) state.nextTradeId = 1;
-    }
-  } catch(e) {}
-}
-function saveSetting(key, val) { state.settings[key] = val; saveState(); }
-
-// =====================
-// NAVIGATION
-// =====================
-function switchView(name) {
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-  document.getElementById('view-' + name).classList.add('active');
-  const map = {home:0, players:1, trade:2, game:3, settle:4, settings:5};
-  if (map[name] !== undefined)
-    document.querySelectorAll('nav button')[map[name]].classList.add('active');
-  renderAll();
-}
-
-// =====================
-// RENDER
-// =====================
-function renderAll() {
-  renderHome(); renderPlayers(); renderTrades();
-  renderGames(); renderSettle(); renderSettingsInputs();
-}
-
-function renderHome() {
-  const hasPl = state.players.length > 0;
-  document.getElementById('home-empty').style.display = hasPl ? 'none' : 'block';
-  document.getElementById('home-content').style.display = hasPl ? 'block' : 'none';
-  if (!hasPl) return;
-  document.getElementById('home-summary').innerHTML = `
-    <div class="summary-card">
-      <div class="val">${state.players.length}<span style="font-size:0.9rem">äºº</span></div>
-      <div class="lbl">ã¡ã³ãã¼</div>
-    </div>
-    <div class="summary-card">
-      <div class="val">${state.trades.length}<span style="font-size:0.9rem">ä»¶</span></div>
-      <div class="lbl">åå¼</div>
-    </div>
-    <div class="summary-card">
-      <div class="val">${state.games.length}<span style="font-size:0.9rem">å</span></div>
-      <div class="lbl">ã²ã¼ã </div>
-    </div>`;
-  document.getElementById('home-balances').innerHTML = state.players.map(p => {
-    const diff = p.currentBalance - p.initialBalance;
-    const diffStr = diff > 0 ? `+${fmt(diff)}` : diff < 0 ? fmt(diff) : 'Â±0';
-    const chipClass = diff > 0 ? 'chip-up' : diff < 0 ? 'chip-down' : 'chip-even';
-    const balClass = p.currentBalance > 0 ? 'balance-positive' : p.currentBalance < 0 ? 'balance-negative' : 'balance-neutral';
-    return `
-      <div class="player-row">
-        ${getAvatar(p)}
-        <div class="player-info">
-          <div class="player-name">${p.name}</div>
-          <div class="player-balance-label">åæ: ${fmt(p.initialBalance)}</div>
-        </div>
-        <div style="text-align:right">
-          <div class="player-balance ${balClass}">${fmt(p.currentBalance)}</div>
-          <span class="chip ${chipClass}">${diffStr}</span>
-        </div>
-      </div>`;
-  }).join('');
-}
-
-function renderPlayers() {
-  const el = document.getElementById('players-list');
-  if (!state.players.length) {
-    el.innerHTML = '<div style="color:var(--text2);text-align:center;padding:20px;font-size:0.85rem">ã¾ã ã¡ã³ãã¼ããã¾ãã</div>';
-    return;
-  }
-  el.innerHTML = state.players.map(p => `
-    <div class="player-row">
-      ${getAvatar(p)}
-      <div class="player-info">
-        <div class="player-name">${p.name}</div>
-        <div class="player-balance-label">åæ: ${fmt(p.initialBalance)} â ç¾å¨: ${fmt(p.currentBalance)}</div>
+    <!-- 精算 -->
+    <div id="view-settle" class="view">
+      <div class="section-header">
+        <span class="section-title">精算</span>
       </div>
-      <button class="btn btn-danger btn-sm" onclick="removePlayer(${p.id})">åé¤</button>
-    </div>`).join('');
-}
+      <div id="settle-content"></div>
+    </div>
 
-function renderTrades() {
-  const el = document.getElementById('trade-list');
-  if (!state.trades.length) {
-    el.innerHTML = `<div class="empty-state"><div class="icon">ð</div><p>ã¾ã åå¼ãè¨é²ããã¦ãã¾ãã<br>ãè¨é²ãããè¿½å ãã¾ããã</p></div>`;
-    return;
-  }
-  el.innerHTML = [...state.trades].reverse().map(t => {
-    const from = getPlayer(t.fromId), to = getPlayer(t.toId);
-    if (!from || !to) return '';
-    return `
-      <div class="history-card">
-        <div class="history-header">
+    <!-- 設定 -->
+    <div id="view-settings" class="view">
+      <div class="section-title" style="margin-bottom:14px">設定</div>
+      <div class="card">
+        <div class="card-title">通貨設定</div>
+        <div class="settings-row">
           <div>
-            <div class="history-title">ð¸ å¯¾ä¾¡äº¤æ</div>
-            <div class="history-date">${fmtDate(t.date)}</div>
+            <div class="lbl">通貨記号</div>
+            <div class="sub">金額の前に表示される記号</div>
           </div>
-          <div class="history-amount" style="color:var(--blue)">${fmt(t.amount)}</div>
+          <input id="setting-symbol" type="text" placeholder="¥" maxlength="3" oninput="saveSetting('symbol', this.value); renderAll()">
         </div>
-        <div class="trade-flow">
-          ${getAvatar(from, true)}
-          <span style="font-weight:600;font-size:0.88rem">${from.name}</span>
-          <span class="arrow">â</span>
-          ${getAvatar(to, true)}
-          <span style="font-weight:600;font-size:0.88rem">${to.name}</span>
-          <span class="amount-badge">${fmt(t.amount)}</span>
-          ${t.description ? `<div class="service-label">ð ${t.description}</div>` : ''}
+        <div class="settings-row">
+          <div>
+            <div class="lbl">通貨名称</div>
+            <div class="sub">例：円 / ドル / コイン / チップ</div>
+          </div>
+          <input id="setting-name" type="text" placeholder="円" maxlength="6" oninput="saveSetting('currencyName', this.value); renderAll()">
         </div>
-      </div>`;
-  }).join('');
-}
+      </div>
+      <div class="card">
+        <div class="card-title">📱 デバイス間でデータを転送</div>
+        <div style="font-size:0.78rem;color:var(--text2);margin-bottom:12px;line-height:1.6">
+          PCのデータをスマホへ移すには：<br>
+          ① PCで「データをコピー」→ ② スマホで下のテキスト欄に貼り付け → ③「インポート」
+        </div>
+        <button class="btn btn-blue btn-full" style="margin-bottom:12px" onclick="exportToClipboard()">📋 データをコピー（エクスポート）</button>
+        <div class="form-group">
+          <label>データを貼り付けてインポート</label>
+          <textarea id="import-text" placeholder="ここにコピーしたデータを貼り付け..." style="min-height:80px;font-size:0.72rem;word-break:break-all"></textarea>
+        </div>
+        <button class="btn btn-success btn-full" onclick="importData()">✅ インポートする</button>
+      </div>
+      <div class="card">
+        <div class="card-title">データ管理</div>
+        <div class="settings-row">
+          <div>
+            <div class="lbl">全データをリセット</div>
+            <div class="sub">メンバー・履歴すべて削除</div>
+          </div>
+          <button class="btn btn-danger btn-sm" onclick="resetAll()">リセット</button>
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="lbl">残高のみリセット</div>
+            <div class="sub">メンバーは残し、残高を初期化</div>
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="resetBalances()">残高リセット</button>
+        </div>
+      </div>
+    </div>
+  </main>
 
-function renderGames() {
-  const el = document.getElementById('game-list');
-  if (!state.games.length) {
-    el.innerHTML = `<div class="empty-state"><div class="icon">ð²</div><p>ã¾ã ã²ã¼ã ãè¨é²ããã¦ãã¾ãã</p></div>`;
-    return;
-  }
-  el.innerHTML = [...state.games].reverse().map(g => {
-    const pot = g.participants.reduce((s, p) => s + p.bet, 0);
-    const typeLabel = {
-      winner_takes_all: 'ð åèç·åã',
-      split: 'ð¤ å±±åã',
-      fixed_amount: 'ð´ çµ¶å¯¾é¡',
-      percentage: 'ð éå½å²å'
-    }[g.type] || 'ð²';
+  <!-- 取引モーダル -->
+  <div class="modal-overlay" id="trade-modal">
+    <div class="modal">
+      <div class="modal-title">🔄 取引を記録</div>
+      <div class="form-group">
+        <div class="trade-player-select">
+          <div>
+            <label>支払う人</label>
+            <select id="trade-from"></select>
+          </div>
+          <div class="trade-arrow-center">→</div>
+          <div>
+            <label>受け取る人</label>
+            <select id="trade-to"></select>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label id="trade-amount-label">金額</label>
+        <input id="trade-amount" type="number" placeholder="0" min="1">
+      </div>
+      <div class="form-group">
+        <label>対価・内容（任意）</label>
+        <textarea id="trade-description" placeholder="例：ランチをおごってもらった&#10;Bさんが荷物を運んでくれた&#10;など"></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-outline" onclick="closeTradeModal()">キャンセル</button>
+        <button class="btn btn-blue" onclick="recordTrade()">✓ 記録する</button>
+      </div>
+    </div>
+  </div>
 
-    let chips;
-    if ((g.type === 'fixed_amount' || g.type === 'percentage') && g.rankings && g.rankings.length) {
-      chips = g.rankings.map((r, i) => {
-        const pl = getPlayer(r.playerId);
-        if (!pl) return '';
-        const cfg = g.payoutConfig && g.payoutConfig[i];
-        const val = cfg ? (g.type === 'percentage' ? `${cfg.value}%` : fmt(cfg.value)) : '';
-        return `<span class="participant-chip winner">${RANK_LABELS[i]} ${pl.name} ${val}</span>`;
-      }).join('');
-      // Non-ranked participants
-      const rankedIds = g.rankings.map(r => r.playerId);
-      g.participants.forEach(gp => {
-        if (!rankedIds.includes(gp.playerId)) {
-          const pl = getPlayer(gp.playerId);
-          if (pl) chips += `<span class="participant-chip">${pl.name} ${fmt(gp.bet)}</span>`;
-        }
+  <!-- ゲームモーダル -->
+  <div class="modal-overlay" id="game-modal">
+    <div class="modal">
+      <div class="step-indicator">
+        <div class="step active" id="step-bar-1"></div>
+        <div class="step" id="step-bar-2"></div>
+        <div class="step" id="step-bar-3"></div>
+      </div>
+
+      <!-- STEP 1 -->
+      <div id="modal-step1">
+        <div class="modal-title">🎲 ゲームの設定</div>
+        <div class="form-group">
+          <label>ゲーム名（任意）</label>
+          <input id="game-name-input" type="text" placeholder="例：ポーカー第1回戦">
+        </div>
+        <div class="form-group">
+          <label>ゲームタイプ</label>
+          <div class="game-type-selector">
+            <div class="game-type-btn selected" id="type-winner" onclick="selectGameType('winner_takes_all')">
+              <div class="icon">🏆</div>
+              <div class="name">勝者総取り</div>
+              <div class="desc">1人が全額獲得</div>
+            </div>
+            <div class="game-type-btn" id="type-split" onclick="selectGameType('split')">
+              <div class="icon">🤝</div>
+              <div class="name">山分け</div>
+              <div class="desc">複数人で分割</div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>参加者を選択</label>
+          <div id="player-select-list"></div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-outline" onclick="closeGameModal()">キャンセル</button>
+          <button class="btn btn-primary" onclick="goStep(2)">次へ →</button>
+        </div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div id="modal-step2" style="display:none">
+        <div class="modal-title">💴 ベット額を入力</div>
+        <div id="bet-inputs"></div>
+        <div class="total-pot-display">
+          <div class="label">合計ポット</div>
+          <div class="amount" id="pot-amount">0</div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-outline" onclick="goStep(1)">← 戻る</button>
+          <button class="btn btn-primary" onclick="goStep(3)">次へ →</button>
+        </div>
+      </div>
+
+      <!-- STEP 3 -->
+      <div id="modal-step3" style="display:none">
+        <div class="modal-title" id="step3-title">🏆 勝者を選択</div>
+        <div id="winner-select"></div>
+        <div class="modal-actions">
+          <button class="btn btn-outline" onclick="goStep(2)">← 戻る</button>
+          <button class="btn btn-success" onclick="recordGame()">✓ 結果を記録</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // =====================
+    // STATE
+    // =====================
+    let state = {
+      players: [],
+      games: [],
+      trades: [],
+      settings: { symbol: '¥', currencyName: '円' },
+      nextPlayerId: 1,
+      nextGameId: 1,
+      nextTradeId: 1
+    };
+
+    let newGame = { name: '', type: 'winner_takes_all', participants: [], winners: [] };
+
+    const AVATAR_COLORS = [
+      '#7c4dff','#00c9a7','#ffd700','#ff5370',
+      '#448aff','#ff9800','#e91e63','#4caf50',
+      '#00bcd4','#9c27b0'
+    ];
+
+    // =====================
+    // UTILS
+    // =====================
+    function fmt(n) {
+      const sym = state.settings.symbol || '¥';
+      return sym + Math.round(n).toLocaleString('ja-JP');
+    }
+
+    function getPlayer(id) { return state.players.find(p => p.id === id); }
+
+    function getAvatar(player, small = false) {
+      const color = AVATAR_COLORS[player.colorIdx % AVATAR_COLORS.length];
+      const size = small ? '28px' : '38px';
+      const fs = small ? '0.75rem' : '0.95rem';
+      return `<div class="player-avatar" style="width:${size};height:${size};font-size:${fs};background:${color}22;color:${color};border:2px solid ${color}40">${player.name[0]}</div>`;
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2500);
+    }
+
+    function fmtDate(iso) {
+      return new Date(iso).toLocaleString('ja-JP', {
+        year: 'numeric', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit'
       });
-    } else {
-      chips = g.participants.map(gp => {
-        const pl = getPlayer(gp.playerId);
-        if (!pl) return '';
-        const isWinner = g.winners.includes(gp.playerId);
-        return `<span class="participant-chip ${isWinner ? 'winner' : ''}">${isWinner ? 'ð ' : ''}${pl.name} ${fmt(gp.bet)}</span>`;
-      }).join('');
     }
 
-    return `
-      <div class="history-card">
-        <div class="history-header">
-          <div>
-            <div class="history-title">${g.name || 'ã²ã¼ã  #' + g.id}</div>
-            <div class="history-date">${fmtDate(g.date)} <span style="color:var(--text2)">${typeLabel}</span></div>
-          </div>
-          <div class="history-amount" style="color:var(--gold)">ããã ${fmt(pot)}</div>
-        </div>
-        <div>${chips}</div>
-      </div>`;
-  }).join('');
-}
+    let _localStorageAvailable = null;
+    function isStorageAvailable() {
+      if (_localStorageAvailable !== null) return _localStorageAvailable;
+      try { localStorage.setItem('__test','1'); localStorage.removeItem('__test'); _localStorageAvailable = true; }
+      catch(e) { _localStorageAvailable = false; }
+      return _localStorageAvailable;
+    }
 
-function renderSettle() {
-  const el = document.getElementById('settle-content');
-  if (state.players.length < 2) {
-    el.innerHTML = `<div class="empty-state"><div class="icon">ð¸</div><p>2äººä»¥ä¸ã®ã¡ã³ãã¼ãè¿½å ããã¨<br>ç²¾ç®æå ±ãè¡¨ç¤ºããã¾ã</p></div>`;
-    return;
-  }
-  const txns = calculateSettlement();
-  if (!txns.length) {
-    el.innerHTML = `<div class="empty-state"><div class="icon">â</div><p>å¨å¡ã®åæ¯ãã¼ã­ã§ãã<br>ç²¾ç®ã¯ä¸è¦ã§ãï¼</p></div>`;
-    return;
-  }
-  const rows = txns.map(t => {
-    const from = getPlayer(t.fromId), to = getPlayer(t.toId);
-    return `
-      <div class="settlement-row">
-        ${getAvatar(from)}
-        <div style="font-weight:600">${from.name}</div>
-        <div class="settlement-arrow">â</div>
-        ${getAvatar(to)}
-        <div style="font-weight:600">${to.name}</div>
-        <div class="settlement-amount">${fmt(t.amount)}</div>
-      </div>`;
-  }).join('');
-  el.innerHTML = `
-    <div class="card">
-      <div class="card-title">ð¡ æå°åå¼ã§ç²¾ç®ããæ¹æ³</div>
-      ${rows}
-    </div>
-    <div class="card">
-      <div class="card-title">åã¡ã³ãã¼ã®æç</div>
-      ${state.players.map(p => {
+    function saveState() {
+      if (!isStorageAvailable()) return;
+      try { localStorage.setItem('tomopay-state', JSON.stringify(state)); } catch(e) {}
+    }
+
+    function loadState() {
+      try {
+        const s = localStorage.getItem('tomopay-state');
+        if (s) {
+          const parsed = JSON.parse(s);
+          state = { ...state, ...parsed };
+          if (!state.settings) state.settings = { symbol: '¥', currencyName: '円' };
+          if (!state.trades) state.trades = [];
+          if (!state.nextTradeId) state.nextTradeId = 1;
+        }
+      } catch(e) {}
+    }
+
+    function saveSetting(key, val) {
+      state.settings[key] = val;
+      saveState();
+    }
+
+    // =====================
+    // NAVIGATION
+    // =====================
+    function switchView(name) {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+      document.getElementById('view-' + name).classList.add('active');
+      const map = {home:0, players:1, trade:2, game:3, settle:4, settings:5};
+      if (map[name] !== undefined)
+        document.querySelectorAll('nav button')[map[name]].classList.add('active');
+      renderAll();
+    }
+
+    // =====================
+    // RENDER
+    // =====================
+    function renderAll() {
+      renderHome();
+      renderPlayers();
+      renderTrades();
+      renderGames();
+      renderSettle();
+      renderSettingsInputs();
+    }
+
+    function renderHome() {
+      const hasPl = state.players.length > 0;
+      document.getElementById('home-empty').style.display = hasPl ? 'none' : 'block';
+      document.getElementById('home-content').style.display = hasPl ? 'block' : 'none';
+      if (!hasPl) return;
+
+      const totalEvents = state.games.length + state.trades.length;
+      document.getElementById('home-summary').innerHTML = `
+        <div class="summary-card">
+          <div class="val">${state.players.length}<span style="font-size:0.9rem">人</span></div>
+          <div class="lbl">メンバー</div>
+        </div>
+        <div class="summary-card">
+          <div class="val">${state.trades.length}<span style="font-size:0.9rem">件</span></div>
+          <div class="lbl">取引</div>
+        </div>
+        <div class="summary-card">
+          <div class="val">${state.games.length}<span style="font-size:0.9rem">回</span></div>
+          <div class="lbl">ゲーム</div>
+        </div>
+      `;
+
+      document.getElementById('home-balances').innerHTML = state.players.map(p => {
         const diff = p.currentBalance - p.initialBalance;
+        const diffStr = diff > 0 ? `+${fmt(diff)}` : diff < 0 ? fmt(diff) : '±0';
         const chipClass = diff > 0 ? 'chip-up' : diff < 0 ? 'chip-down' : 'chip-even';
-        const diffStr = diff > 0 ? `+${fmt(diff)}` : diff < 0 ? fmt(diff) : 'Â±0';
+        const balClass = p.currentBalance > 0 ? 'balance-positive' : p.currentBalance < 0 ? 'balance-negative' : 'balance-neutral';
         return `
           <div class="player-row">
             ${getAvatar(p)}
-            <div class="player-info"><div class="player-name">${p.name}</div></div>
-            <span class="chip ${chipClass}" style="font-size:0.85rem;padding:4px 12px">${diffStr}</span>
+            <div class="player-info">
+              <div class="player-name">${p.name}</div>
+              <div class="player-balance-label">初期: ${fmt(p.initialBalance)}</div>
+            </div>
+            <div style="text-align:right">
+              <div class="player-balance ${balClass}">${fmt(p.currentBalance)}</div>
+              <span class="chip ${chipClass}">${diffStr}</span>
+            </div>
           </div>`;
-      }).join('')}
-    </div>`;
-}
-
-function renderSettingsInputs() {
-  const symEl = document.getElementById('setting-symbol');
-  const nameEl = document.getElementById('setting-name');
-  if (document.activeElement !== symEl) symEl.value = state.settings.symbol || 'Â¥';
-  if (document.activeElement !== nameEl) nameEl.value = state.settings.currencyName || 'å';
-}
-
-// =====================
-// SETTLEMENT ALGORITHM
-// =====================
-function calculateSettlement() {
-  const nets = state.players.map(p => ({ id: p.id, net: p.currentBalance - p.initialBalance }));
-  let creditors = nets.filter(p => p.net > 0.5).map(p => ({...p})).sort((a,b) => b.net - a.net);
-  let debtors = nets.filter(p => p.net < -0.5).map(p => ({...p})).sort((a,b) => a.net - b.net);
-  const txns = [];
-  let ci = 0, di = 0;
-  while (ci < creditors.length && di < debtors.length) {
-    const amount = Math.min(creditors[ci].net, -debtors[di].net);
-    txns.push({ fromId: debtors[di].id, toId: creditors[ci].id, amount: Math.round(amount) });
-    creditors[ci].net -= amount;
-    debtors[di].net += amount;
-    if (creditors[ci].net < 0.5) ci++;
-    if (debtors[di].net > -0.5) di++;
-  }
-  return txns;
-}
-
-// =====================
-// PLAYER MANAGEMENT
-// =====================
-function addPlayer() {
-  const nameEl = document.getElementById('new-player-name');
-  const amtEl = document.getElementById('new-player-amount');
-  const name = nameEl.value.trim();
-  const amount = parseFloat(amtEl.value) || 10000;
-  if (!name) { showToast('â ï¸ ååãå¥åãã¦ãã ãã'); return; }
-  if (state.players.find(p => p.name === name)) { showToast('â ï¸ åãååã®ã¡ã³ãã¼ãå­å¨ãã¾ã'); return; }
-  state.players.push({
-    id: state.nextPlayerId++, name,
-    initialBalance: amount, currentBalance: amount,
-    colorIdx: state.players.length
-  });
-  nameEl.value = ''; amtEl.value = '';
-  saveState(); renderAll();
-  showToast(`â ${name} ãè¿½å ãã¾ãã`);
-}
-function removePlayer(id) {
-  const p = getPlayer(id);
-  if (!confirm(`ã${p.name}ããåé¤ãã¾ããï¼`)) return;
-  state.players = state.players.filter(pl => pl.id !== id);
-  saveState(); renderAll();
-  showToast('ðï¸ ã¡ã³ãã¼ãåé¤ãã¾ãã');
-}
-function resetBalances() {
-  if (!confirm('å¨å¡ã®æ®é«ãåææ®é«ã«ãªã»ãããã¾ããï¼')) return;
-  state.players.forEach(p => p.currentBalance = p.initialBalance);
-  state.games = []; state.trades = [];
-  saveState(); renderAll();
-  showToast('ð æ®é«ããªã»ãããã¾ãã');
-}
-function resetAll() {
-  if (!confirm('å¨ãã¼ã¼ï¼ã¡ã³ãã¼ã»åå¼ã»ã²ã¼ã ï¼ããã¹ã¦åé¤ãã¾ããï¼')) return;
-  state.players = []; state.games = []; state.trades = [];
-  state.nextPlayerId = 1; state.nextGameId = 1; state.nextTradeId = 1;
-  saveState(); renderAll();
-  showToast('ðï¸ ãã¹ã¦ã®ãã¼ã¿ãåé¤ãã¾ãã');
-}
-
-// =====================
-// TRADE MODAL
-// =====================
-function openTradeModal() {
-  if (state.players.length < 2) { showToast('â ï¸ 2äººä»¥ä¸ã®ã¡ã³ãã¼ãå¿è¦ã§ã'); switchView('players'); return; }
-  const cur = state.settings.currencyName || 'å';
-  document.getElementById('trade-amount-label').textContent = `éé¡ï¼${cur}ï¼`;
-  const opts = state.players.map(p => `<option value="${p.id}">${p.name}ï¼${fmt(p.currentBalance)}ï¼</option>`).join('');
-  document.getElementById('trade-from').innerHTML = opts;
-  document.getElementById('trade-to').innerHTML = opts;
-  if (state.players.length >= 2) document.getElementById('trade-to').selectedIndex = 1;
-  document.getElementById('trade-amount').value = '';
-  document.getElementById('trade-description').value = '';
-  document.getElementById('trade-modal').classList.add('open');
-}
-function closeTradeModal() { document.getElementById('trade-modal').classList.remove('open'); }
-function recordTrade() {
-  const fromId = parseInt(document.getElementById('trade-from').value);
-  const toId = parseInt(document.getElementById('trade-to').value);
-  const amount = parseFloat(document.getElementById('trade-amount').value);
-  const description = document.getElementById('trade-description').value.trim();
-  if (fromId === toId) { showToast('â ï¸ æ¯æãäººã¨åãåãäººãåãã§ã'); return; }
-  if (!amount || amount <= 0) { showToast('â ï¸ éé¡ãå¥åãã¦ãã ãã'); return; }
-  getPlayer(fromId).currentBalance -= amount;
-  getPlayer(toId).currentBalance += amount;
-  state.trades.push({ id: state.nextTradeId++, fromId, toId, amount, description, date: new Date().toISOString() });
-  saveState(); closeTradeModal(); renderAll();
-  showToast(`ð¸ ${getPlayer(fromId).name} â ${getPlayer(toId).name} ${fmt(amount)} ãè¨é²ãã¾ãã`);
-}
-
-// =====================
-// GAME MODAL
-// =====================
-function openNewGameModal() {
-  if (state.players.length < 2) { showToast('â ï¸ 2äººä»¥ä¸ã®ã¡ã³ãã¼ãå¿è¦ã§ã'); switchView('players'); return; }
-  newGame = { name: '', type: 'winner_takes_all', payoutConfig: [], participants: [], winners: [] };
-  document.getElementById('game-name-input').value = '';
-  // Reset type buttons
-  ['winner_takes_all','split','fixed_amount','percentage'].forEach(t => {
-    document.getElementById('type-' + t).classList.toggle('selected', t === 'winner_takes_all');
-  });
-  document.getElementById('payout-config-section').style.display = 'none';
-  goStep(1);
-  document.getElementById('game-modal').classList.add('open');
-}
-function closeGameModal() { document.getElementById('game-modal').classList.remove('open'); }
-
-function selectGameType(type) {
-  newGame.type = type;
-  ['winner_takes_all','split','fixed_amount','percentage'].forEach(t => {
-    document.getElementById('type-' + t).classList.toggle('selected', t === type);
-  });
-  const showConfig = (type === 'fixed_amount' || type === 'percentage');
-  const section = document.getElementById('payout-config-section');
-  section.style.display = showConfig ? 'block' : 'none';
-  if (showConfig) {
-    if (newGame.payoutConfig.length === 0) {
-      newGame.payoutConfig = [{place:1,value:0},{place:2,value:0}];
+      }).join('');
     }
-    renderPayoutConfig();
-  }
-}
 
-function renderPayoutConfig() {
-  const isPct = newGame.type === 'percentage';
-  const cur = state.settings.currencyName || 'å';
-  document.getElementById('payout-config-title').textContent = isPct ? 'ð éå½å²åè¨­å®' : 'ð´ çµ¶å¯¾é¡è¨­å®';
-  document.getElementById('payout-config-hint').textContent = isPct
-    ? 'åé ä½ã®ç²å¾å²åï¼%ï¼ãå¥åãã¦ãã ããï¼åè¨100æ¨å¥¨ï¼'
-    : `åé ä½ã®ç²å¾${cur}é¡ãå¥åãã¦ãã ãã`;
-
-  document.getElementById('payout-rows').innerHTML = newGame.payoutConfig.map((cfg, i) => `
-    <div class="payout-row">
-      <span class="rank-label">${RANK_LABELS[i] || (i+1)+'ä½'}</span>
-      <input type="number" value="${cfg.value || ''}"
-        placeholder="${isPct ? '50' : '5000'}" min="0" style="flex:1"
-        oninput="updatePayoutConfig(${i}, this.value)">
-      <span style="font-size:0.78rem;color:var(--text2);min-width:22px">${isPct ? '%' : cur}</span>
-      ${newGame.payoutConfig.length > 1
-        ? `<button class="btn btn-outline btn-sm" style="padding:4px 8px;min-width:32px"
-            onclick="removePayoutRank(${i})">â</button>`
-        : '<div style="min-width:32px"></div>'}
-    </div>`).join('');
-
-  const pctBar = document.getElementById('pct-total-bar');
-  pctBar.style.display = isPct ? 'flex' : 'none';
-  if (isPct) updatePctTotal();
-}
-
-function addPayoutRank() {
-  newGame.payoutConfig.push({place: newGame.payoutConfig.length + 1, value: 0});
-  renderPayoutConfig();
-}
-function removePayoutRank(index) {
-  newGame.payoutConfig.splice(index, 1);
-  newGame.payoutConfig.forEach((c,i) => c.place = i+1);
-  renderPayoutConfig();
-}
-function updatePayoutConfig(index, value) {
-  newGame.payoutConfig[index].value = parseFloat(value) || 0;
-  if (newGame.type === 'percentage') updatePctTotal();
-}
-function updatePctTotal() {
-  const total = newGame.payoutConfig.reduce((s,c) => s + (parseFloat(c.value)||0), 0);
-  const el = document.getElementById('pct-total');
-  if (el) {
-    el.textContent = total.toFixed(1).replace('.0','');
-    el.style.color = Math.abs(total - 100) < 0.1 ? 'var(--green)' : 'var(--gold)';
-  }
-}
-
-function goStep(step) {
-  [1,2,3].forEach(i => {
-    document.getElementById('modal-step'+i).style.display = i === step ? 'block' : 'none';
-    const bar = document.getElementById('step-bar-'+i);
-    bar.classList.remove('active','done');
-    if (i < step) bar.classList.add('done');
-    else if (i === step) bar.classList.add('active');
-  });
-  if (step === 1) renderPlayerSelectList();
-  else if (step === 2) { if (!validateStep1()) return; renderBetInputs(); }
-  else if (step === 3) { if (!validateStep2()) return; renderWinnerSelect(); }
-}
-
-function validateStep1() {
-  newGame.name = document.getElementById('game-name-input').value.trim();
-
-  // Validate payout config for new types
-  if (newGame.type === 'fixed_amount' || newGame.type === 'percentage') {
-    if (newGame.payoutConfig.length === 0) {
-      showToast('â ï¸ éå½è¨­å®ãè¿½å ãã¦ãã ãã'); return false;
-    }
-    for (let i = 0; i < newGame.payoutConfig.length; i++) {
-      if (!newGame.payoutConfig[i].value || newGame.payoutConfig[i].value <= 0) {
-        showToast(`â ï¸ ${RANK_LABELS[i]}ã®å¤ãå¥åãã¦ãã ãã`); return false;
+    function renderPlayers() {
+      const el = document.getElementById('players-list');
+      if (!state.players.length) {
+        el.innerHTML = '<div style="color:var(--text2);text-align:center;padding:20px;font-size:0.85rem">まだメンバーがいません</div>';
+        return;
       }
+      el.innerHTML = state.players.map(p => `
+        <div class="player-row">
+          ${getAvatar(p)}
+          <div class="player-info">
+            <div class="player-name">${p.name}</div>
+            <div class="player-balance-label">初期: ${fmt(p.initialBalance)} → 現在: ${fmt(p.currentBalance)}</div>
+          </div>
+          <button class="btn btn-danger btn-sm" onclick="removePlayer(${p.id})">削除</button>
+        </div>`).join('');
     }
-    // Re-read values from DOM
-    document.querySelectorAll('#payout-rows input').forEach((inp, i) => {
-      if (newGame.payoutConfig[i]) {
-        newGame.payoutConfig[i].value = parseFloat(inp.value) || 0;
+
+    function renderTrades() {
+      const el = document.getElementById('trade-list');
+      if (!state.trades.length) {
+        el.innerHTML = `<div class="empty-state"><div class="icon">🔄</div><p>まだ取引が記録されていません<br>「記録」から追加しましょう</p></div>`;
+        return;
       }
-    });
-  }
+      el.innerHTML = [...state.trades].reverse().map(t => {
+        const from = getPlayer(t.fromId);
+        const to = getPlayer(t.toId);
+        if (!from || !to) return '';
+        return `
+          <div class="history-card">
+            <div class="history-header">
+              <div>
+                <div class="history-title">💸 対価交換</div>
+                <div class="history-date">${fmtDate(t.date)}</div>
+              </div>
+              <div class="history-amount" style="color:var(--blue)">${fmt(t.amount)}</div>
+            </div>
+            <div class="trade-flow">
+              ${getAvatar(from, true)}
+              <span style="font-weight:600;font-size:0.88rem">${from.name}</span>
+              <span class="arrow">→</span>
+              ${getAvatar(to, true)}
+              <span style="font-weight:600;font-size:0.88rem">${to.name}</span>
+              <span class="amount-badge">${fmt(t.amount)}</span>
+              ${t.description ? `<div class="service-label">📝 ${t.description}</div>` : ''}
+            </div>
+          </div>`;
+      }).join('');
+    }
 
-  const checked = [...document.querySelectorAll('#player-select-list input[type=checkbox]:checked')];
-  if (checked.length < 2) { showToast('â ï¸ 2äººä»¥ä¸ã®åå èãé¸æãã¦ãã ãã'); return false; }
+    function renderGames() {
+      const el = document.getElementById('game-list');
+      if (!state.games.length) {
+        el.innerHTML = `<div class="empty-state"><div class="icon">🎲</div><p>まだゲームが記録されていません</p></div>`;
+        return;
+      }
+      el.innerHTML = [...state.games].reverse().map(g => {
+        const pot = g.participants.reduce((s, p) => s + p.bet, 0);
+        const chips = g.participants.map(gp => {
+          const pl = getPlayer(gp.playerId);
+          if (!pl) return '';
+          const isWinner = g.winners.includes(gp.playerId);
+          return `<span class="participant-chip ${isWinner ? 'winner' : ''}">
+            ${isWinner ? '🏆 ' : ''}${pl.name} ${fmt(gp.bet)}</span>`;
+        }).join('');
+        return `
+          <div class="history-card">
+            <div class="history-header">
+              <div>
+                <div class="history-title">${g.name || 'ゲーム #' + g.id}</div>
+                <div class="history-date">${fmtDate(g.date)}</div>
+              </div>
+              <div class="history-amount" style="color:var(--gold)">ポット ${fmt(pot)}</div>
+            </div>
+            <div>${chips}</div>
+          </div>`;
+      }).join('');
+    }
 
-  // Check that enough participants for the configured ranks
-  if ((newGame.type === 'fixed_amount' || newGame.type === 'percentage') &&
-      newGame.payoutConfig.length > checked.length) {
-    showToast(`â ï¸ è¨­å®ããé ä½æ°(${newGame.payoutConfig.length})ããåå èãå¢ããã¦ãã ãã`);
-    return false;
-  }
-
-  newGame.participants = checked.map(cb => ({ playerId: parseInt(cb.value), bet: 0 }));
-  return true;
-}
-
-function validateStep2() {
-  let valid = true;
-  document.querySelectorAll('.bet-input').forEach(inp => {
-    const val = parseFloat(inp.value);
-    if (!val || val <= 0) { valid = false; return; }
-    const pid = parseInt(inp.dataset.pid);
-    const gp = newGame.participants.find(p => p.playerId === pid);
-    if (gp) gp.bet = val;
-  });
-  if (!valid) { showToast('â ï¸ å¨å¡ã®ãããé¡ãå¥åãã¦ãã ãã'); return false; }
-  return true;
-}
-
-function renderPlayerSelectList() {
-  document.getElementById('player-select-list').innerHTML = state.players.map(p => `
-    <label class="player-select-item">
-      <input type="checkbox" value="${p.id}" checked>
-      ${getAvatar(p, true)}
-      <span>${p.name}ï¼${fmt(p.currentBalance)}ï¼</span>
-    </label>`).join('');
-}
-
-function renderBetInputs() {
-  document.getElementById('bet-inputs').innerHTML = newGame.participants.map(gp => {
-    const p = getPlayer(gp.playerId);
-    return `
-      <div class="participant-bet-row">
-        ${getAvatar(p, true)}
-        <div class="player-name">${p.name}</div>
-        <input class="bet-input" type="number" placeholder="0" min="1"
-          data-pid="${p.id}" value="${gp.bet || ''}" oninput="updatePotDisplay()">
-      </div>`;
-  }).join('');
-  updatePotDisplay();
-}
-function updatePotDisplay() {
-  let total = 0;
-  document.querySelectorAll('.bet-input').forEach(inp => { total += parseFloat(inp.value) || 0; });
-  document.getElementById('pot-amount').textContent = fmt(total);
-}
-
-function renderWinnerSelect() {
-  if (newGame.type === 'fixed_amount' || newGame.type === 'percentage') {
-    renderRankAssignment();
-    return;
-  }
-  const isSplit = newGame.type === 'split';
-  document.getElementById('step3-title').textContent = isSplit ? 'ð¤ åèãé¸æï¼è¤æ°å¯ï¼' : 'ð åèã1äººé¸æ';
-  const inputType = isSplit ? 'checkbox' : 'radio';
-  document.getElementById('winner-select').innerHTML = newGame.participants.map(gp => {
-    const p = getPlayer(gp.playerId);
-    return `
-      <label class="winner-select-row" id="winner-row-${p.id}">
-        <input type="${inputType}" name="winner" value="${p.id}" onchange="updateWinnerStyle()">
-        ${getAvatar(p)}
-        <span style="font-weight:600">${p.name}</span>
-        <span style="color:var(--text2);font-size:0.82rem;margin-left:auto">Bet: ${fmt(gp.bet)}</span>
-      </label>`;
-  }).join('');
-}
-
-function renderRankAssignment() {
-  const isPct = newGame.type === 'percentage';
-  const pot = newGame.participants.reduce((s, p) => s + p.bet, 0);
-  document.getElementById('step3-title').textContent = 'ð é ä½ãå²ãå½ã¦';
-  const participantOpts = newGame.participants.map(gp => {
-    const p = getPlayer(gp.playerId);
-    return `<option value="${p.id}">${p.name}</option>`;
-  }).join('');
-
-  document.getElementById('winner-select').innerHTML = `
-    <div style="font-size:0.78rem;color:var(--text2);margin-bottom:12px">
-      åé ä½ã«åå èãå²ãå½ã¦ã¦ãã ãã
-    </div>
-    ${newGame.payoutConfig.map((cfg, i) => {
-      const payout = isPct ? Math.floor(pot * cfg.value / 100) : cfg.value;
-      return `
-        <div class="rank-assign-row">
-          <span class="rank-badge">${RANK_LABELS[i] || (i+1)+'ä½'}</span>
-          <select id="rank-player-${i}" style="flex:1">
-            <option value="">-- é¸æ --</option>
-            ${participantOpts}
-          </select>
-          <span class="payout-disp">
-            ${isPct ? cfg.value + '% = ' : ''}${fmt(payout)}
-          </span>
+    function renderSettle() {
+      const el = document.getElementById('settle-content');
+      if (state.players.length < 2) {
+        el.innerHTML = `<div class="empty-state"><div class="icon">💸</div><p>2人以上のメンバーを追加すると<br>精算情報が表示されます</p></div>`;
+        return;
+      }
+      const txns = calculateSettlement();
+      if (!txns.length) {
+        el.innerHTML = `<div class="empty-state"><div class="icon">✅</div><p>全員の収支がゼロです。<br>精算は不要です！</p></div>`;
+        return;
+      }
+      const rows = txns.map(t => {
+        const from = getPlayer(t.fromId), to = getPlayer(t.toId);
+        return `
+          <div class="settlement-row">
+            ${getAvatar(from)}
+            <div style="font-weight:600">${from.name}</div>
+            <div class="settlement-arrow">→</div>
+            ${getAvatar(to)}
+            <div style="font-weight:600">${to.name}</div>
+            <div class="settlement-amount">${fmt(t.amount)}</div>
+          </div>`;
+      }).join('');
+      el.innerHTML = `
+        <div class="card">
+          <div class="card-title">💡 最少取引で精算する方法</div>
+          ${rows}
+        </div>
+        <div class="card">
+          <div class="card-title">各メンバーの損益</div>
+          ${state.players.map(p => {
+            const diff = p.currentBalance - p.initialBalance;
+            const chipClass = diff > 0 ? 'chip-up' : diff < 0 ? 'chip-down' : 'chip-even';
+            const diffStr = diff > 0 ? `+${fmt(diff)}` : diff < 0 ? fmt(diff) : '±0';
+            return `
+              <div class="player-row">
+                ${getAvatar(p)}
+                <div class="player-info"><div class="player-name">${p.name}</div></div>
+                <span class="chip ${chipClass}" style="font-size:0.85rem;padding:4px 12px">${diffStr}</span>
+              </div>`;
+          }).join('')}
         </div>`;
-    }).join('')}
-    <div style="font-size:0.72rem;color:var(--text2);margin-top:8px">
-      â» é¸æãããªãã£ãåå èã¯ãããé¡æ²¡åã»ç²å¾0
-    </div>`;
-}
-
-function updateWinnerStyle() {
-  document.querySelectorAll('.winner-select-row').forEach(r => r.classList.remove('selected'));
-  document.querySelectorAll('#winner-select input:checked').forEach(inp => {
-    document.getElementById('winner-row-' + inp.value).classList.add('selected');
-  });
-}
-
-function recordGame() {
-  if (newGame.type === 'fixed_amount' || newGame.type === 'percentage') {
-    recordGameWithRanks(); return;
-  }
-  const checked = [...document.querySelectorAll('#winner-select input:checked')];
-  if (!checked.length) { showToast('â ï¸ åèãé¸æãã¦ãã ãã'); return; }
-  newGame.winners = checked.map(c => parseInt(c.value));
-  const pot = newGame.participants.reduce((s, p) => s + p.bet, 0);
-  newGame.participants.forEach(gp => { getPlayer(gp.playerId).currentBalance -= gp.bet; });
-  if (newGame.type === 'winner_takes_all' || newGame.winners.length === 1) {
-    getPlayer(newGame.winners[0]).currentBalance += pot;
-  } else {
-    const share = Math.floor(pot / newGame.winners.length);
-    newGame.winners.forEach(id => { getPlayer(id).currentBalance += share; });
-  }
-  state.games.push({
-    id: state.nextGameId++, name: newGame.name, type: newGame.type,
-    participants: [...newGame.participants], winners: [...newGame.winners],
-    date: new Date().toISOString()
-  });
-  saveState(); closeGameModal(); renderAll();
-  showToast('ð ã²ã¼ã ãè¨é²ãã¾ããï¼');
-}
-
-function recordGameWithRanks() {
-  const pot = newGame.participants.reduce((s, p) => s + p.bet, 0);
-  const isPct = newGame.type === 'percentage';
-
-  // Collect rank assignments
-  const assignments = [];
-  for (let i = 0; i < newGame.payoutConfig.length; i++) {
-    const sel = document.getElementById('rank-player-' + i);
-    if (!sel || !sel.value) {
-      showToast(`â ï¸ ${RANK_LABELS[i]}ã®åå èãé¸æãã¦ãã ãã`); return;
     }
-    const pid = parseInt(sel.value);
-    if (assignments.find(a => a.playerId === pid)) {
-      showToast('â ï¸ åãåå èãè¤æ°ã®é ä½ã«å²ãå½ã¦ããã¨ã¯ã§ãã¾ãã'); return;
+
+    function renderSettingsInputs() {
+      const symEl = document.getElementById('setting-symbol');
+      const nameEl = document.getElementById('setting-name');
+      if (document.activeElement !== symEl) symEl.value = state.settings.symbol || '¥';
+      if (document.activeElement !== nameEl) nameEl.value = state.settings.currencyName || '円';
     }
-    assignments.push({ playerId: pid, place: i + 1 });
-  }
 
-  // Deduct bets from all participants
-  newGame.participants.forEach(gp => { getPlayer(gp.playerId).currentBalance -= gp.bet; });
+    // =====================
+    // SETTLEMENT ALGORITHM
+    // =====================
+    function calculateSettlement() {
+      const nets = state.players.map(p => ({
+        id: p.id,
+        net: p.currentBalance - p.initialBalance
+      }));
+      let creditors = nets.filter(p => p.net > 0.5).map(p => ({...p})).sort((a,b) => b.net - a.net);
+      let debtors = nets.filter(p => p.net < -0.5).map(p => ({...p})).sort((a,b) => a.net - b.net);
+      const txns = [];
+      let ci = 0, di = 0;
+      while (ci < creditors.length && di < debtors.length) {
+        const amount = Math.min(creditors[ci].net, -debtors[di].net);
+        txns.push({ fromId: debtors[di].id, toId: creditors[ci].id, amount: Math.round(amount) });
+        creditors[ci].net -= amount;
+        debtors[di].net += amount;
+        if (creditors[ci].net < 0.5) ci++;
+        if (debtors[di].net > -0.5) di++;
+      }
+      return txns;
+    }
 
-  // Give payouts to ranked players
-  let totalPaid = 0;
-  newGame.payoutConfig.forEach((cfg, i) => {
-    const payout = isPct ? Math.floor(pot * cfg.value / 100) : cfg.value;
-    getPlayer(assignments[i].playerId).currentBalance += payout;
-    totalPaid += payout;
-  });
+    // =====================
+    // PLAYER MANAGEMENT
+    // =====================
+    function addPlayer() {
+      const nameEl = document.getElementById('new-player-name');
+      const amtEl = document.getElementById('new-player-amount');
+      const name = nameEl.value.trim();
+      const amount = parseFloat(amtEl.value) || 10000;
+      if (!name) { showToast('⚠️ 名前を入力してください'); return; }
+      if (state.players.find(p => p.name === name)) { showToast('⚠️ 同じ名前のメンバーが存在します'); return; }
+      state.players.push({
+        id: state.nextPlayerId++,
+        name,
+        initialBalance: amount,
+        currentBalance: amount,
+        colorIdx: state.players.length
+      });
+      nameEl.value = ''; amtEl.value = '';
+      saveState(); renderAll();
+      showToast(`✅ ${name} を追加しました`);
+    }
 
-  state.games.push({
-    id: state.nextGameId++, name: newGame.name, type: newGame.type,
-    payoutConfig: [...newGame.payoutConfig],
-    participants: [...newGame.participants],
-    winners: assignments.map(a => a.playerId),
-    rankings: [...assignments],
-    date: new Date().toISOString()
-  });
+    function removePlayer(id) {
+      const p = getPlayer(id);
+      if (!confirm(`「${p.name}」を削除しますか？`)) return;
+      state.players = state.players.filter(pl => pl.id !== id);
+      saveState(); renderAll();
+      showToast('🗑️ メンバーを削除しました');
+    }
 
-  saveState(); closeGameModal(); renderAll();
-  showToast('ð ã²ã¼ã ãè¨é²ãã¾ããï¼');
-}
+    function resetBalances() {
+      if (!confirm('全員の残高を初期残高にリセットしますか？')) return;
+      state.players.forEach(p => p.currentBalance = p.initialBalance);
+      state.games = []; state.trades = [];
+      saveState(); renderAll();
+      showToast('🔄 残高をリセットしました');
+    }
 
-// =====================
-// INIT
-// =====================
-loadState();
-renderAll();
-document.getElementById('new-player-name').addEventListener('keydown', e => {
-  if (e.key === 'Enter') document.getElementById('new-player-amount').focus();
-});
-document.getElementById('new-player-amount').addEventListener('keydown', e => {
-  if (e.key === 'Enter') addPlayer();
-});
-</script>
+    function resetAll() {
+      if (!confirm('全データ（メンバー・取引・ゲーム）をすべて削除しますか？')) return;
+      state.players = []; state.games = []; state.trades = [];
+      state.nextPlayerId = 1; state.nextGameId = 1; state.nextTradeId = 1;
+      saveState(); renderAll();
+      showToast('🗑️ すべてのデータを削除しました');
+    }
+
+    // =====================
+    // TRADE MODAL
+    // =====================
+    function openTradeModal() {
+      if (state.players.length < 2) { showToast('⚠️ 2人以上のメンバーが必要です'); switchView('players'); return; }
+      const sym = state.settings.symbol || '¥';
+      const cur = state.settings.currencyName || '円';
+      document.getElementById('trade-amount-label').textContent = `金額（${cur}）`;
+
+      const opts = state.players.map(p => `<option value="${p.id}">${p.name}（${fmt(p.currentBalance)}）</option>`).join('');
+      document.getElementById('trade-from').innerHTML = opts;
+      document.getElementById('trade-to').innerHTML = opts;
+      // デフォルトで別の人を選択
+      if (state.players.length >= 2) document.getElementById('trade-to').selectedIndex = 1;
+      document.getElementById('trade-amount').value = '';
+      document.getElementById('trade-description').value = '';
+      document.getElementById('trade-modal').classList.add('open');
+    }
+
+    function closeTradeModal() { document.getElementById('trade-modal').classList.remove('open'); }
+
+    function recordTrade() {
+      const fromId = parseInt(document.getElementById('trade-from').value);
+      const toId = parseInt(document.getElementById('trade-to').value);
+      const amount = parseFloat(document.getElementById('trade-amount').value);
+      const description = document.getElementById('trade-description').value.trim();
+
+      if (fromId === toId) { showToast('⚠️ 支払う人と受け取る人が同じです'); return; }
+      if (!amount || amount <= 0) { showToast('⚠️ 金額を入力してください'); return; }
+
+      const fromPlayer = getPlayer(fromId);
+      const toPlayer = getPlayer(toId);
+
+      fromPlayer.currentBalance -= amount;
+      toPlayer.currentBalance += amount;
+
+      state.trades.push({
+        id: state.nextTradeId++,
+        fromId, toId, amount,
+        description,
+        date: new Date().toISOString()
+      });
+
+      saveState();
+      closeTradeModal();
+      renderAll();
+      showToast(`💸 ${fromPlayer.name} → ${toPlayer.name} ${fmt(amount)} を記録しました`);
+    }
+
+    // =====================
+    // GAME MODAL
+    // =====================
+    function openNewGameModal() {
+      if (state.players.length < 2) { showToast('⚠️ 2人以上のメンバーが必要です'); switchView('players'); return; }
+      newGame = { name: '', type: 'winner_takes_all', participants: [], winners: [] };
+      document.getElementById('game-name-input').value = '';
+      goStep(1);
+      document.getElementById('game-modal').classList.add('open');
+    }
+
+    function closeGameModal() { document.getElementById('game-modal').classList.remove('open'); }
+
+    function selectGameType(type) {
+      newGame.type = type;
+      document.getElementById('type-winner').classList.toggle('selected', type === 'winner_takes_all');
+      document.getElementById('type-split').classList.toggle('selected', type === 'split');
+    }
+
+    function goStep(step) {
+      [1,2,3].forEach(i => {
+        document.getElementById('modal-step'+i).style.display = i === step ? 'block' : 'none';
+        const bar = document.getElementById('step-bar-'+i);
+        bar.classList.remove('active','done');
+        if (i < step) bar.classList.add('done');
+        else if (i === step) bar.classList.add('active');
+      });
+      if (step === 1) renderPlayerSelectList();
+      else if (step === 2) { if (!validateStep1()) return; renderBetInputs(); }
+      else if (step === 3) { if (!validateStep2()) return; renderWinnerSelect(); }
+    }
+
+    function validateStep1() {
+      newGame.name = document.getElementById('game-name-input').value.trim();
+      const checked = [...document.querySelectorAll('#player-select-list input[type=checkbox]:checked')];
+      if (checked.length < 2) { showToast('⚠️ 2人以上の参加者を選択してください'); return false; }
+      newGame.participants = checked.map(cb => ({ playerId: parseInt(cb.value), bet: 0 }));
+      return true;
+    }
+
+    function validateStep2() {
+      let valid = true;
+      document.querySelectorAll('.bet-input').forEach(inp => {
+        const val = parseFloat(inp.value);
+        if (!val || val <= 0) { valid = false; return; }
+        const pid = parseInt(inp.dataset.pid);
+        const gp = newGame.participants.find(p => p.playerId === pid);
+        if (gp) gp.bet = val;
+      });
+      if (!valid) { showToast('⚠️ 全員のベット額を入力してください'); return false; }
+      return true;
+    }
+
+    function renderPlayerSelectList() {
+      document.getElementById('player-select-list').innerHTML = state.players.map(p => `
+        <label class="player-select-item">
+          <input type="checkbox" value="${p.id}" checked>
+          ${getAvatar(p, true)}
+          <span>${p.name}（${fmt(p.currentBalance)}）</span>
+        </label>`).join('');
+    }
+
+    function renderBetInputs() {
+      const cur = state.settings.currencyName || '円';
+      document.getElementById('bet-inputs').innerHTML = newGame.participants.map(gp => {
+        const p = getPlayer(gp.playerId);
+        return `
+          <div class="participant-bet-row">
+            ${getAvatar(p, true)}
+            <div class="player-name">${p.name}</div>
+            <input class="bet-input" type="number" placeholder="0" min="1"
+              data-pid="${p.id}" value="${gp.bet || ''}" oninput="updatePotDisplay()">
+          </div>`;
+      }).join('');
+      updatePotDisplay();
+    }
+
+    function updatePotDisplay() {
+      let total = 0;
+      document.querySelectorAll('.bet-input').forEach(inp => { total += parseFloat(inp.value) || 0; });
+      document.getElementById('pot-amount').textContent = fmt(total);
+    }
+
+    function renderWinnerSelect() {
+      const isSplit = newGame.type === 'split';
+      document.getElementById('step3-title').textContent = isSplit ? '🤝 勝者を選択（複数可）' : '🏆 勝者を1人選択';
+      const inputType = isSplit ? 'checkbox' : 'radio';
+      document.getElementById('winner-select').innerHTML = newGame.participants.map(gp => {
+        const p = getPlayer(gp.playerId);
+        return `
+          <label class="winner-select-row" id="winner-row-${p.id}">
+            <input type="${inputType}" name="winner" value="${p.id}" onchange="updateWinnerStyle(${p.id})">
+            ${getAvatar(p)}
+            <span style="font-weight:600">${p.name}</span>
+            <span style="color:var(--text2);font-size:0.82rem;margin-left:auto">Bet: ${fmt(gp.bet)}</span>
+          </label>`;
+      }).join('');
+    }
+
+    function updateWinnerStyle() {
+      document.querySelectorAll('.winner-select-row').forEach(r => r.classList.remove('selected'));
+      document.querySelectorAll('#winner-select input:checked').forEach(inp => {
+        document.getElementById('winner-row-' + inp.value).classList.add('selected');
+      });
+    }
+
+    function recordGame() {
+      const checked = [...document.querySelectorAll('#winner-select input:checked')];
+      if (!checked.length) { showToast('⚠️ 勝者を選択してください'); return; }
+      newGame.winners = checked.map(c => parseInt(c.value));
+      const pot = newGame.participants.reduce((s, p) => s + p.bet, 0);
+
+      newGame.participants.forEach(gp => { getPlayer(gp.playerId).currentBalance -= gp.bet; });
+
+      if (newGame.type === 'winner_takes_all' || newGame.winners.length === 1) {
+        getPlayer(newGame.winners[0]).currentBalance += pot;
+      } else {
+        const share = Math.floor(pot / newGame.winners.length);
+        newGame.winners.forEach(id => { getPlayer(id).currentBalance += share; });
+      }
+
+      state.games.push({
+        id: state.nextGameId++,
+        name: newGame.name,
+        type: newGame.type,
+        participants: [...newGame.participants],
+        winners: [...newGame.winners],
+        date: new Date().toISOString()
+      });
+
+      saveState(); closeGameModal(); renderAll();
+      showToast('🎉 ゲームを記録しました！');
+    }
+
+    // =====================
+    // EXPORT / IMPORT
+    // =====================
+    function exportToClipboard() {
+      const json = JSON.stringify(state);
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(json).then(() => {
+          showToast('📋 データをコピーしました！スマホに貼り付けてください');
+        }).catch(() => {
+          document.getElementById('import-text').value = json;
+          showToast('⚠️ 下のテキストエリアにコピーされました');
+          switchView('settings');
+        });
+      } else {
+        document.getElementById('import-text').value = json;
+        showToast('⚠️ 下のテキストエリアにコピーされました');
+      }
+    }
+
+    function importData() {
+      const text = (document.getElementById('import-text').value || '').trim();
+      if (!text) { showToast('⚠️ データを貼り付けてください'); return; }
+      try {
+        const imported = JSON.parse(text);
+        if (!imported.players || !Array.isArray(imported.players)) {
+          showToast('⚠️ 無効なデータです'); return;
+        }
+        if (!confirm('現在のデータを上書きしてインポートしますか？')) return;
+        state = {
+          players: imported.players || [],
+          games: imported.games || [],
+          trades: imported.trades || [],
+          settings: imported.settings || { symbol: '¥', currencyName: '円' },
+          nextPlayerId: imported.nextPlayerId || 1,
+          nextGameId: imported.nextGameId || 1,
+          nextTradeId: imported.nextTradeId || 1
+        };
+        saveState();
+        renderAll();
+        document.getElementById('import-text').value = '';
+        showToast('✅ データをインポートしました！');
+      } catch(e) {
+        showToast('⚠️ データの解析に失敗しました');
+      }
+    }
+
+    // =====================
+    // INIT
+    // =====================
+    loadState();
+    renderAll();
+
+    document.getElementById('new-player-name').addEventListener('keydown', e => {
+      if (e.key === 'Enter') document.getElementById('new-player-amount').focus();
+    });
+    document.getElementById('new-player-amount').addEventListener('keydown', e => {
+      if (e.key === 'Enter') addPlayer();
+    });
+  </script>
 </body>
 </html>
